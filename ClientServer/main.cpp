@@ -1,11 +1,10 @@
 /**
- * @file Test file for server.cpp and client.cpp
+ * @file Implementation file for Random Meal Generator
  * @authors Phuc To, Narissa Tsuboi
  * @date 2/6/22
  * @version 1.0
  *
  */
-
 
 #include <iostream>
 
