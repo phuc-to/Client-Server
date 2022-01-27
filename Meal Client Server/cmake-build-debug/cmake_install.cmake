@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/12066/GitHub/Client-Server/ClientServerExample
+# Install script for directory: C:/Users/12066/GitHub/Client-Server/Meal Client Server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/ClientServer")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/Meal_Client_Server")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/12066/GitHub/Client-Server/ClientServerExample/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/12066/GitHub/Client-Server/Meal Client Server/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

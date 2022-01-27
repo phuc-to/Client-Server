@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/12066/GitHub/Client-Server/ClientServer/cmake-build-debug"
+			"value" : "c:/Users/12066/GitHub/Client-Server/ClientServerExample/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -623,7 +623,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/12066/GitHub/Client-Server/ClientServer"
+			"value" : "C:/Users/12066/GitHub/Client-Server/ClientServerExample"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1239,7 +1239,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/12066/GitHub/Client-Server/ClientServer/cmake-build-debug"
+			"value" : "C:/Users/12066/GitHub/Client-Server/ClientServerExample/cmake-build-debug"
 		},
 		{
 			"name" : "ClientServer_IS_TOP_LEVEL",
@@ -1263,7 +1263,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/12066/GitHub/Client-Server/ClientServer"
+			"value" : "C:/Users/12066/GitHub/Client-Server/ClientServerExample"
 		}
 	],
 	"kind" : "cache",
