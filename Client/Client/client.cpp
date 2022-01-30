@@ -1,4 +1,4 @@
-abcd/**
+/**
  * @file Client-side code for Meal Time socket programming project
  * @authors Phuc T, Narissa T
  * @date 2/6/22
