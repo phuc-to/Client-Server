@@ -1,6 +1,6 @@
 /**
  * @file Client-side code for Meal Time socket programming project
- * @authors Phuc T, Narissa T
+ * @authors Phuc T, Narissa T, Kristen K
  * @date 2/6/22
  * @version 1.0
  * @reference https://www.geeksforgeeks.org/socket-programming-cc/
