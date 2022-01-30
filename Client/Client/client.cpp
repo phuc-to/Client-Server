@@ -8,14 +8,18 @@
  */
 
 #include <stdio.h>
+#include <iostream>       // C++ IO
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
 #define PORT 10328  // Per spec. 
 
+using namespace std;
+
 int main(int argc, char const *argv[])
 {
+	cout << "Hello world";
 
 
 
