@@ -35,15 +35,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{aa99460d-aa1a-4868-ab2b-f3889f033740}</ProjectGuid>
+    <ProjectGuid>{3d706a51-e32c-47cb-9066-5664bd65d067}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>Project1</RootNamespace>
+    <RootNamespace>Server</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
     <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
     <LinuxProjectType>{2238F9CD-F817-4ECC-BD14-2524D2669B35}</LinuxProjectType>
-    <ProjectName>MealTime</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -76,7 +75,6 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="client.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup />
