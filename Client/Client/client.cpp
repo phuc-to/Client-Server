@@ -20,20 +20,23 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
+	// START CLIENT SOCKET INIT //////////////////////////////////////////////////////////////
+
+
 	// client socket and buffer init 
-	const int NAMESPACE = AF_INET;    // internet namespace IP4 
-	const int STYLE = SOCK_STREAM;    // comm style for TCP programming
-	const int PROTOCOL = 0;           // 0 for internet 
-	const int BUFF_SIZE = 1024;       // default buffer size
+	const int NAMESPACE = AF_INET;        // internet namespace IP4 
+	const int STYLE = SOCK_STREAM;        // comm style for TCP programming
+	const int PROTOCOL = 0;               // 0 for internet 
+	const int BUFF_SIZE = 1024;           // default buffer size
 	
-	char buffer[BUFF_SIZE] = { 0 };  // init empty character buffer 
-	int cli_socket = 0;              // set client socket to true
-	int valread;                     // holds communication from server
+	char buffer[BUFF_SIZE] = { 0 };       // init empty character buffer 
+	int cli_socket = 0;                   // set client socket to true
+	int valread;                          // holds communication from server
 
 	// server socket address init 
-	struct sockaddr_in address;       // server socket address struct
-	address.sin_family = NAMESPACE;     // server socket's address format is INET for IP4
-	address.sin_port = htons(PORT);   // assign server's port and convert to network bytes
+	struct sockaddr_in address;           // server socket address struct
+	address.sin_family = NAMESPACE;       // server socket's address format is INET for IP4
+	address.sin_port = htons(PORT);       // assign server's port and convert to network bytes
 
 	// create client socket, exit if error creating socket, else print success msg
 	// socket function: socket(int namespace, int style, int protocol)

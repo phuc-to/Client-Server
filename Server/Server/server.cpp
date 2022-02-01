@@ -53,22 +53,23 @@ int main(int argc, char const *argv[])
 	// START SERVER SOCKET INIT //////////////////////////////////////////////////////////////
 
 	// server socket and buffer init 
-	const int NAMESPACE = AF_INET;    // internet namespace IP4 
-	const int STYLE = SOCK_STREAM;    // comm style for TCP programming
-	const int PROTOCOL = 0;           // 0 for internet 
-	const int BUFF_SIZE = 1024;       // default buffer size
-	const int QUEUE_SIZE = 3;  // number of connection requests in queue before error is thrown
+	const int NAMESPACE = AF_INET;          // internet namespace IP4 
+	const int STYLE = SOCK_STREAM;          // comm style for TCP programming
+	const int PROTOCOL = 0;                 // 0 for internet 
+	const int BUFF_SIZE = 1024;             // default buffer size
+	const int QUEUE_SIZE = 3;               // number of connection requests in queue before error is thrown
 
-	char buffer[BUFF_SIZE] = { 0 };  // init empty character buffer 
-	int serv_socket;    // server's listening socket
-	int new_socket;   // server's accept socket for client interaction
+	char buffer[BUFF_SIZE] = { 0 };         // init empty character buffer 
+	int serv_socket;                        // server's listening socket
+	int new_socket;                         // server's accept socket for client interaction
 	int valread;      
 
 	// server socket address init
 	struct sockaddr_in address;             // server socket address struct
+	int addressLen = sizeof(address);       // parameter for accept fxn
 	address.sin_family = NAMESPACE;         // server socket's address format is INET for IP4
-	address.sin_addr.s_addr = INADDR_ANY;  // server socket is bound to LOCAL HOST
-	address.sin_port = htons(PORT);        // assign server's port and convert to network bytes
+	address.sin_addr.s_addr = INADDR_ANY;   // server socket is bound to LOCAL HOST
+	address.sin_port = htons(PORT);         // assign server's port and convert to network bytes
 
 	// create server socket, exit if error creating socket, else print success msg
 	if ((serv_socket = socket(NAMESPACE, STYLE, PROTOCOL)) < 0) {
@@ -111,7 +112,7 @@ int main(int argc, char const *argv[])
 
 	// accept incoming connection request by creating a new socket to host the connection
 	// accept function: accept(int socket, struct sockakddr* address, socklen_t*length of address)
-	if ((new_socket = accept(new_socket, (struct sockaddr *)&address,(socklen_t*)&(sizeof(address)))) < 0) {
+	if ((new_socket = accept(serv_socket, (struct sockaddr *)&address,(socklen_t*)(&addressLen))) < 0) {
 		perror("\nServer: Error creating new socket\n");
 		exit(EXIT_FAILURE);
 	}
@@ -126,7 +127,6 @@ int main(int argc, char const *argv[])
 	// send msg to client
 	const char *testMsg = "Testing from the server!";
 	send(new_socket, testMsg, strlen(testMsg), 0);
-
 
 	// END SERVER SOCKET INIT //////////////////////////////////////////////////////////////
 
