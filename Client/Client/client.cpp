@@ -117,7 +117,11 @@ int main(int argc, char const *argv[])
                 msg = "mealRandom";
                 break;
             case "2":
-                msg = "mealByTime";
+                string time;
+                msg = "mealByTime;";
+                cout << "What day of time are you looking at? ";
+                cin >> time;
+                msg += time;
                 break;
             case "3":
                 msg = "mealByCuisine";
