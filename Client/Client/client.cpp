@@ -18,6 +18,8 @@
 
 using namespace std;
 
+const string deli = ";";
+
 int main(int argc, char const *argv[])
 {
 	// START CLIENT SOCKET INIT //////////////////////////////////////////////////////////////
@@ -65,5 +67,90 @@ int main(int argc, char const *argv[])
 	valread = read(cli_socket, buffer, BUFF_SIZE); 
 	cout << "Server: " << buffer << "\n";
 
+    //Main program
+    char *msg;
+    welcome();
+    optionList();
+
+    //Validate account
+
+    bool valid = false;
+    while (!valid) {
+        string option;
+        string username;
+        string password;
+
+        cin >> option;
+        if ((option == "1") || (option == "2")) {
+            if (option == "1"){
+                msg = "connect;";
+            }
+            else msg = "signup;";
+            cout << "Please provide your username: ";
+            cin >> username;
+            cout << "Please provide your password: ";
+            cin >> password;
+            msg += "username;password";
+            send(cli_socket, msg, strlen(msg), 0);
+            valread = read(cli_socket, buffer, BUFF_SIZE);
+            string returnMsg = buffer;
+            error_code = returnMsg.substr(0, returnMsg.find(deli));
+            if (error_code = 0) valid = true;
+            else {
+                if (option == "1") cout << "Invalid username/password. Try again!" << endl;
+                else cout << "Account already exists. Try login, or use another identity!" << endl;
+                optionList();
+            }
+        }
+    }
+
+
+
+    valid = false;
+    while (!valid) {
+        string meal;
+
+        mealOptions();
+        cin >> meal;
+        switch(meal) {
+            case "1":
+                msg = "mealRandom";
+                break;
+            case "2":
+                msg = "mealByTime";
+                break;
+            case "3":
+                msg = "mealByCuisine";
+                break;
+            default:
+                valid = !valid;
+                cout << "Invalid option. Let's start again!" << endl;
+        }
+        valid = !valid;
+        send(cli_socket, msg, strlen(msg), 0);
+        valread = read(cli_socket, buffer, BUFF_SIZE);
+        cout << "The meal for you would be " << buffer << endl;
+    }
+
 	return 0;
+}
+
+void welcome()
+{
+    cout << "Welcome to your Meal Generator." << endl;
+}
+
+void optionList()
+{
+    cout << "These are the account options: " << endl;
+    cout << "1: Login" << endl;
+    cout << "2: Signup" << endl;
+}
+
+void mealOptions()
+{
+    cout << "What kind of meal are you looking for?" << endl;
+    cout << "1. A random one" << endl;
+    cout << "2. A meal by time" << endl;
+    cout << "3. A meal by cuisine" << endl;
 }
