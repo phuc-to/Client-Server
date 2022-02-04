@@ -90,7 +90,7 @@ int main(int argc, char const *argv[])
             cin >> username;
             cout << "Please provide your password: ";
             cin >> password;
-            msg += "username;password";
+            msg += username + ";" + password;
             send(cli_socket, msg, strlen(msg), 0);
             valread = read(cli_socket, buffer, BUFF_SIZE);
             string returnMsg = buffer;
