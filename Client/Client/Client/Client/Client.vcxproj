@@ -34,8 +34,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ae6e6738-e726-4d55-8d57-1812bca72ab9}</ProjectGuid>
+    <ProjectGuid>{7b8aa675-0d5e-40c9-a6fc-9ce231fcd5b4}</ProjectGuid>
     <Keyword>Linux</Keyword>
     <RootNamespace>Client</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
@@ -74,9 +77,6 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <ItemGroup>
-    <ClCompile Include="Client.cpp" />
-  </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

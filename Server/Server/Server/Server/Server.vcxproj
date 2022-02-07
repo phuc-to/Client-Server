@@ -35,9 +35,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ae6e6738-e726-4d55-8d57-1812bca72ab9}</ProjectGuid>
+    <ProjectGuid>{6924b82e-a505-467c-8188-395030debc3d}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>Client</RootNamespace>
+    <RootNamespace>Server</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
@@ -75,7 +75,11 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\GitHub\CPSC5042ClientServer\server\main.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\GitHub\CPSC5042ClientServer\server\RPCServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\GitHub\CPSC5042ClientServer\server\RPCServer.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

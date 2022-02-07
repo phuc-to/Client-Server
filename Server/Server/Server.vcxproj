@@ -35,7 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3d706a51-e32c-47cb-9066-5664bd65d067}</ProjectGuid>
+    <ProjectGuid>{f00674c0-c15c-472c-a0e2-3e38e09c9036}</ProjectGuid>
     <Keyword>Linux</Keyword>
     <RootNamespace>Server</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
@@ -75,7 +75,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="server.cpp" />
+    <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
