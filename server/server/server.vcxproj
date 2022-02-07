@@ -35,9 +35,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ab1f792c-652a-4cc8-9885-397995e1dc8b}</ProjectGuid>
+    <ProjectGuid>{41cdc32e-fcf6-433a-ac9d-1dec1b1d9971}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>TestCS1</RootNamespace>
+    <RootNamespace>server</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
@@ -75,7 +75,11 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="Hello.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RPCServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RPCServer.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
