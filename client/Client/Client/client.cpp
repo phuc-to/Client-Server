@@ -8,7 +8,17 @@
 #include <vector>
 #include <iterator>
 
+#include <iostream>
+
+
+
+using namespace std;
 // This is a C Program. No classes. You may turn this into an Object Oriented C++ program if you wish
+
+void welcome();
+void optionList();
+void mealOptions();
+
 
 void ParseTokens(char* buffer, std::vector<std::string>& a)
 {
@@ -57,6 +67,7 @@ bool ConnectToServer(const char* serverAddress, int port, int& sock)
 
 int main(int argc, char const* argv[])
 {
+    
     int sock = 0;
     struct sockaddr_in serv_addr;
     const char* connectRPC = "connect;MIKE;MIKE;";
@@ -65,6 +76,7 @@ int main(int argc, char const* argv[])
     char buffer[1024] = { 0 };
     const char* serverAddress = argv[1];
     const int port = atoi(argv[2]);
+    const int BUFF_SIZE = 1024;
 
     bool bConnect = ConnectToServer(serverAddress, port, sock);
 
@@ -79,6 +91,80 @@ int main(int argc, char const* argv[])
 
         int valread = read(sock, buffer, 1024);
         printf("Return response = %s with valread=%d\n", buffer, valread);
+
+
+        //Main program
+        string msg;
+        welcome();
+        optionList();
+
+        //Validate account
+
+        bool valid = false;
+        while (!valid) {
+            string option;
+            string username;
+            string password;
+
+            cin >> option;
+            if ((option == "1") || (option == "2")) {
+                if (option == "1") {
+                    msg = "connect;";
+                }
+                else msg = "signup;";
+                cout << "Please provide your username: ";
+                cin >> username;
+                cout << "Please provide your password: ";
+                cin >> password;
+                msg += username + ';' + password;
+                const char* curMsg = msg.c_str();
+                strcpy(buffer, curMsg);
+                send(sock, buffer, strlen(buffer), 0);
+                valread = read(sock, buffer, 1024);
+                string returnMsg = buffer;
+                string error_code = returnMsg.substr(0, returnMsg.find("deli"));
+                if (error_code == "0") valid = true;
+                else {
+                    if (option == "1") cout << "Invalid username/password. Try again!" << endl;
+                    else cout << "Account already exists. Try login, or use another identity!" << endl;
+                    optionList();
+                }
+            }
+        }
+
+
+
+        valid = false;
+        while (!valid) {
+            int meal;
+            string time;
+
+            mealOptions();
+            cin >> meal;
+            switch (meal) {
+            case 1:
+                msg = "mealRandom";
+                break;
+            case 2:
+                msg = "mealByTime;";
+                cout << "What day of time are you looking at? ";
+                cin >> time;
+                msg += time;
+                break;
+            case 3:
+                msg = "mealByCuisine";
+                break;
+            default:
+                valid = !valid;
+                cout << "Invalid option. Let's start again!" << endl;
+            }
+            valid = !valid;
+            const char* curMsg = msg.c_str();
+            strcpy(buffer, curMsg);
+            send(sock, buffer, strlen(buffer), 0);
+            valread = read(sock, buffer, BUFF_SIZE);
+            cout << "The meal for you would be " << buffer << endl;
+        }
 
 
 
@@ -112,4 +198,24 @@ int main(int argc, char const* argv[])
     close(sock);
 
     return 0;
+}
+
+void welcome()
+{
+    cout << "Welcome to your Meal Generator." << endl;
+}
+
+void optionList()
+{
+    cout << "These are the account options: " << endl;
+    cout << "1: Login" << endl;
+    cout << "2: Signup" << endl;
+}
+
+void mealOptions()
+{
+    cout << "What kind of meal are you looking for?" << endl;
+    cout << "1. A random one" << endl;
+    cout << "2. A meal by time" << endl;
+    cout << "3. A meal by cuisine" << endl;
 }
