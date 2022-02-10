@@ -149,14 +149,7 @@ bool RPCServer::ProcessRPC()
 
         arrayTokens.clear();
         this->ParseTokens(buffer, arrayTokens);
-#if 0
-        // Enumerate through the tokens. The first token is always the specific RPC
-        for (vector<string>::iterator t = arrayTokens.begin(); t != arrayTokens.end(); ++t)
-        {
-            printf("Debugging our tokens\n");
-            printf("token = %s\n", t);
-        }
-#endif
+
         // string statements are not supported with a switch, so using if/else logic to dispatch
         string aString = arrayTokens[RPCTOKEN];
 
