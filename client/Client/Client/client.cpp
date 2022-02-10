@@ -13,6 +13,7 @@
 
 
 using namespace std;
+const char deli = ';';
 // This is a C Program. No classes. You may turn this into an Object Oriented C++ program if you wish
 
 void welcome();
@@ -85,14 +86,18 @@ int main(int argc, char const* argv[])
         strcpy(buffer, connectRPC);
         int nlen = strlen(buffer);
         buffer[nlen] = 0;   // Put the null terminator
+#if 0
         int valwrite = send(sock, buffer, strlen(buffer) + 1, 0);
 
         printf("Connect message sent with %d bytes\n", valwrite);
 
-        int valread = read(sock, buffer, 1024);
+        int valread = read(sock, buffer, BUFF_SIZE);
         printf("Return response = %s with valread=%d\n", buffer, valread);
-
-
+#endif
+        
+        int valsend;
+        int valread;
+        
         //Main program
         string msg;
         welcome();
@@ -119,13 +124,17 @@ int main(int argc, char const* argv[])
                 msg += username + ';' + password;
                 const char* curMsg = msg.c_str();
                 strcpy(buffer, curMsg);
-                send(sock, buffer, strlen(buffer), 0);
-                valread = read(sock, buffer, 1024);
+                valsend = send(sock, buffer, strlen(buffer), 0);
+                valread = read(sock, buffer, BUFF_SIZE);
                 string returnMsg = buffer;
-                string error_code = returnMsg.substr(0, returnMsg.find("deli"));
-                if (error_code == "0") valid = true;
+                string error_code = returnMsg.substr(0, returnMsg.find(deli));
+                if (error_code == "successful")
+                {
+                    valid = true;
+                    cout << "You successfully logged in" << endl << endl;
+                }
                 else {
-                    if (option == "1") cout << "Invalid username/password. Try again!" << endl;
+                    if (option == "failed") cout << "Invalid username/password. Try again!" << endl;
                     else cout << "Account already exists. Try login, or use another identity!" << endl;
                     optionList();
                 }
@@ -137,22 +146,25 @@ int main(int argc, char const* argv[])
         valid = false;
         while (!valid) {
             int meal;
-            string time;
+            string info;
 
             mealOptions();
             cin >> meal;
             switch (meal) {
             case 1:
-                msg = "mealRandom";
+                msg = "mealRandom;";
                 break;
             case 2:
                 msg = "mealByTime;";
                 cout << "What day of time are you looking at? ";
-                cin >> time;
-                msg += time;
+                cin >> info;
+                msg += info;
                 break;
             case 3:
-                msg = "mealByCuisine";
+                msg = "mealByCuisine;";
+                cout << "What cuisine do you want? ";
+                cin >> info;
+                msg += info;
                 break;
             default:
                 valid = !valid;
@@ -161,9 +173,9 @@ int main(int argc, char const* argv[])
             valid = !valid;
             const char* curMsg = msg.c_str();
             strcpy(buffer, curMsg);
-            send(sock, buffer, strlen(buffer), 0);
+            valsend = send(sock, buffer, strlen(buffer), 0);
             valread = read(sock, buffer, BUFF_SIZE);
-            cout << "The meal for you would be " << buffer << endl;
+            cout << "The meal for you would be " << buffer << endl << endl;
         }
 
 
@@ -186,7 +198,7 @@ int main(int argc, char const* argv[])
 
         printf("DisConnect message sent with %d bytes\n", valwrite);
 
-        int valread = read(sock, buffer, 1024);
+        int valread = read(sock, buffer, BUFF_SIZE);
         printf("Return response = %s with valread=%d\n", buffer, valread);
     }
     else

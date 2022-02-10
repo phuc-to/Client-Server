@@ -77,6 +77,7 @@ class RPCServer
 		// First one in this function should be a connect, and it 
 		// will continue try to process RPC's until a Disconnect happens
 		bool ProcessConnectRPC(vector<string>& arrayTokens);
+		bool ProcessMealRPC(vector<string>& arrayTokens);
 		bool ProcessStatusRPC();
 		bool ProcessDisconnectRPC();
 

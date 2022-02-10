@@ -149,14 +149,14 @@ bool RPCServer::ProcessRPC()
 
         arrayTokens.clear();
         this->ParseTokens(buffer, arrayTokens);
-
+#if 0
         // Enumerate through the tokens. The first token is always the specific RPC
         for (vector<string>::iterator t = arrayTokens.begin(); t != arrayTokens.end(); ++t)
         {
             printf("Debugging our tokens\n");
             printf("token = %s\n", t);
         }
-
+#endif
         // string statements are not supported with a switch, so using if/else logic to dispatch
         string aString = arrayTokens[RPCTOKEN];
 
@@ -176,7 +176,21 @@ bool RPCServer::ProcessRPC()
 
         else if ((bConnected == true) && (aString == "status"))
             bStatusOk = ProcessStatusRPC();   // Status RPC
+        
+        else if ((bConnected == true) && (aString == "mealRandom"))
+        {
+            bStatusOk = ProcessMealRPC(arrayTokens);
+        }
 
+        else if ((bConnected == true) && (aString == "mealByTime"))
+        {
+            bStatusOk = ProcessMealRPC(arrayTokens);
+        }
+
+        else if ((bConnected == true) && (aString == "mealByCuisine"))
+        {
+            bStatusOk = ProcessMealRPC(arrayTokens);
+        }
         else
         {
             // Not in our list, perhaps, print out what was sent
@@ -196,7 +210,7 @@ bool RPCServer::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
     string userNameString = arrayTokens[USERNAMETOKEN];
     string passwordString = arrayTokens[PASSWORDTOKEN];
     char szBuffer[80];
-
+#if 0
     // Our Authentication Logic. Looks like Mike/Mike is only valid combination
     if ((userNameString == "MIKE") && (passwordString == "MIKE"))
     {
@@ -206,7 +220,8 @@ bool RPCServer::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
     {
         strcpy(szBuffer, "0;"); // Not Connected
     }
-
+#endif
+    strcpy(szBuffer, "successful");
     // Send Response back on our socket
     int nlen = strlen(szBuffer);
     szBuffer[nlen] = 0;
@@ -232,5 +247,34 @@ bool RPCServer::ProcessDisconnectRPC()
     int nlen = strlen(szBuffer);
     szBuffer[nlen] = 0;
     send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+    return true;
+}
+
+/*
+*/
+bool RPCServer::ProcessMealRPC(std::vector<std::string>& arrayTokens)
+{
+    const int INFOTOKEN = 1;
+
+    // Strip out tokens 1 and 2 (username, password)
+    string info = arrayTokens[INFOTOKEN];
+    char szBuffer[80];
+#if 0
+    // Our Authentication Logic. Looks like Mike/Mike is only valid combination
+    if ((userNameString == "MIKE") && (passwordString == "MIKE"))
+    {
+        strcpy(szBuffer, "1;"); // Connected
+    }
+    else
+    {
+        strcpy(szBuffer, "0;"); // Not Connected
+    }
+#endif
+    strcpy(szBuffer, "Instant Noodle");
+    // Send Response back on our socket
+    int nlen = strlen(szBuffer);
+    szBuffer[nlen] = 0;
+    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+
     return true;
 }
