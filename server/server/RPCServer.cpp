@@ -259,17 +259,6 @@ bool RPCServer::ProcessMealRPC(std::vector<std::string>& arrayTokens)
     // Strip out tokens 1 and 2 (username, password)
     string info = arrayTokens[INFOTOKEN];
     char szBuffer[80];
-#if 0
-    // Our Authentication Logic. Looks like Mike/Mike is only valid combination
-    if ((userNameString == "MIKE") && (passwordString == "MIKE"))
-    {
-        strcpy(szBuffer, "1;"); // Connected
-    }
-    else
-    {
-        strcpy(szBuffer, "0;"); // Not Connected
-    }
-#endif
     strcpy(szBuffer, "Instant Noodle");
     // Send Response back on our socket
     int nlen = strlen(szBuffer);

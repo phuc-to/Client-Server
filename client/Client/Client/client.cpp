@@ -71,8 +71,6 @@ int main(int argc, char const* argv[])
     
     int sock = 0;
     struct sockaddr_in serv_addr;
-    const char* connectRPC = "connect;MIKE;MIKE;";
-    const char* statusRPC = "status;";
     const char* logoffRPC = "disconnect;";
     char buffer[1024] = { 0 };
     const char* serverAddress = argv[1];
@@ -83,17 +81,6 @@ int main(int argc, char const* argv[])
 
     if (bConnect == true)
     {
-        strcpy(buffer, connectRPC);
-        int nlen = strlen(buffer);
-        buffer[nlen] = 0;   // Put the null terminator
-#if 0
-        int valwrite = send(sock, buffer, strlen(buffer) + 1, 0);
-
-        printf("Connect message sent with %d bytes\n", valwrite);
-
-        int valread = read(sock, buffer, BUFF_SIZE);
-        printf("Return response = %s with valread=%d\n", buffer, valread);
-#endif
         
         int valsend;
         int valread;
