@@ -229,7 +229,7 @@ bool RPCServer::ProcessStatusRPC()
 bool RPCServer::ProcessDisconnectRPC()
 {
     char szBuffer[16];
-    strcpy(szBuffer, "disconnect");
+    strcpy(szBuffer, "successful");
     // Send Response back on our socket
     int nlen = strlen(szBuffer);
     szBuffer[nlen] = 0;

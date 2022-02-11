@@ -196,7 +196,7 @@ int main(int argc, char const* argv[])
             }
             if ((meal <= 4) && (meal > 0))
             {
-
+                cout << endl;
                 const char* curMsg = msg.c_str();
                 strcpy(buffer, curMsg);
                 valsend = send(sock, buffer, strlen(buffer), 0);
