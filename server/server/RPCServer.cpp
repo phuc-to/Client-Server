@@ -78,7 +78,7 @@ bool RPCServer::StartServer()
 }
 
 /*
-* Will accept a new connection by listening on it's address
+* Will accept a new connection by listening on its address.
 *
 */
 
@@ -118,7 +118,10 @@ void RPCServer::ParseTokens(char* buffer, std::vector<std::string>& a)
 }
 
 /*
-* ProcessRPC will examine buffer and will essentially control
+* ProcessRPC will examine buffer and will essentially control which RPC calls
+* are made. The function invokes the ParseTokens method to read the message
+* sent by the client, and then invokes the appropriate RPC method call.
+* 
 */
 bool RPCServer::ProcessRPC()
 {
@@ -188,6 +191,9 @@ bool RPCServer::ProcessRPC()
     return true;
 }
 
+/*
+* Connects the 
+*/
 bool RPCServer::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 {
     const int USERNAMETOKEN = 1;
@@ -206,7 +212,8 @@ bool RPCServer::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
     return true;
 }
 
-/* TDB
+/* 
+* Returns the status of the RPC server.
 */
 bool RPCServer::ProcessStatusRPC()
 {
@@ -214,6 +221,8 @@ bool RPCServer::ProcessStatusRPC()
 }
 
 /*
+* Disconnects server socket from the lcient socket, and sends client 
+* message stating disconnect was successful. 
 */
 bool RPCServer::ProcessDisconnectRPC()
 {
@@ -227,6 +236,9 @@ bool RPCServer::ProcessDisconnectRPC()
 }
 
 /*
+* Returns a buffer containing the information
+* for the meal that meets the client's submitted
+* criteria. 
 */
 bool RPCServer::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 {

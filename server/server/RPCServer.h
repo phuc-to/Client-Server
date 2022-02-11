@@ -1,5 +1,5 @@
 /**
- @file  Server side class header  for MealTime socket programming project
+ @file  Server side class header for MealTime socket programming project
  @authors Phuc T, Narissa T, Kristen K
  @date 2/10/22
  @version 1.0
@@ -20,7 +20,7 @@
 using namespace std; 
 
 /**
- * TODO: Class description 
+ * Sever class header file.  
 */
 class RPCServer
 {
@@ -40,7 +40,7 @@ class RPCServer
 
 		/** Starts server file descriptor socket, opening it to listen for connection requests. 
 		@pre An initialized RPCServer object. 
-		@post An RPCServer listening for connection requestions. 
+		@post An RPCServer listening for connection requests. 
 		@returns True Upon successful start up. 
 		*/
 		bool StartServer();
@@ -63,6 +63,9 @@ class RPCServer
 		void ParseTokens(char* buffer, vector<string>& a);
 
 		/** 
+		* Function for processing all RPC calls. 
+		* @pre Buffer sent by the client.
+		* @post The appropriate RPC call has been invoked.
 		*/
 		bool ProcessRPC();
 

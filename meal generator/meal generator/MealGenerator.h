@@ -14,6 +14,7 @@ using namespace std;
 class MealGenerator
 
 private:
+	private vector 
 
 
 public:
@@ -21,4 +22,4 @@ public:
 
 		~MealGenerator;
 
-		addMeal(string time, )
+		addMeal(string time, string cuisine);
