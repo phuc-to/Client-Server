@@ -1,16 +1,10 @@
 /**
  @file  Server side class file for MealTime socket programming project
  @authors Phuc T, Narissa T, Kristen K
- @date 2/8/22
+ @date 2/10/22
  @version 1.0
  @reference https://www.geeksforgeeks.org/socket-programming-cc/
  @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
-  
- GNU C functions 
- setsockopt function: setsockopt(int socket, int level, int optname, int optval, socklen_t optlen)
- bind function: bind(int socket, struct sockaddr*address, socklen_t length)
- listen function: listen(int socket, int number of connection requests allowed in queue)
- read function: read(int socket, buffer, buffer size)
  */
 
 
@@ -149,14 +143,7 @@ bool RPCServer::ProcessRPC()
 
         arrayTokens.clear();
         this->ParseTokens(buffer, arrayTokens);
-#if 0
-        // Enumerate through the tokens. The first token is always the specific RPC
-        for (vector<string>::iterator t = arrayTokens.begin(); t != arrayTokens.end(); ++t)
-        {
-            printf("Debugging our tokens\n");
-            printf("token = %s\n", t);
-        }
-#endif
+
         // string statements are not supported with a switch, so using if/else logic to dispatch
         string aString = arrayTokens[RPCTOKEN];
 
