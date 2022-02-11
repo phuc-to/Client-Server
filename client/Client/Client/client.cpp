@@ -190,18 +190,20 @@ int main(int argc, char const* argv[])
             case 4:
                 valid = !valid;
                 msg = "disconnect;";
+                break;
             default:
                 valid = !valid;
                 cout << "Invalid option. Let's start again!" << endl;
+                meal = 5;
             }
             if ((meal <= 4) && (meal > 0))
             {
-
+                cout << endl;
                 const char* curMsg = msg.c_str();
                 strcpy(buffer, curMsg);
                 valsend = send(sock, buffer, strlen(buffer), 0);
                 if (meal == 4)
-                    printf("Disconnect message sent with %d bytes\n", valsend);
+                    cout << "Disconnect message sent" << endl;
                 else
                     cout << "Your meal request has been sent" << endl;
                 sleep(2);
@@ -209,57 +211,33 @@ int main(int argc, char const* argv[])
                 if (meal == 4)
                 {
                     cout << "You are disconnected" << endl;
-                    printf("Return response = %s with valread=%d\n", buffer, valread);
                 }
                 else
+                {
                     cout << "The meal for you would be " << buffer << endl << endl;
 
+                    cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
+                    cin >> meal;
+                    if (meal == 2)
+                    {
+                        valid = !valid;
 
-                cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
-                cin >> meal;
-                if (meal == 2)
-                {
-                    valid = !valid;
-
-                    strcpy(buffer, logoffRPC);
-                    valsend = send(sock, buffer, strlen(buffer), 0);
-                    printf("Disconnect message sent with %d bytes\n", valsend);
-                    sleep(2);
-                    valread = read(sock, buffer, BUFF_SIZE);
-                    cout << "You are disconnected" << endl;
+                        strcpy(buffer, logoffRPC);
+                        valsend = send(sock, buffer, strlen(buffer), 0);
+                        printf("Disconnect message sent");
+                        sleep(2);
+                        valread = read(sock, buffer, BUFF_SIZE);
+                        cout << "You are disconnected" << endl;
+                    }
                 }
             }
-
         }
-
-
-
     }
     else
     {
         printf("Exit without calling RPC");
     }
 
-#if 0
-    // Do a Disconnect Message
-
-    if (bConnect == true)
-    {
-        strcpy(buffer, logoffRPC);
-        int nlen = strlen(buffer);
-        buffer[nlen] = 0;   // Put the null terminator
-        int valwrite = send(sock, buffer, strlen(buffer) + 1, 0);
-
-        printf("Disconnect message sent with %d bytes\n", valwrite);
-
-        int valread = read(sock, buffer, BUFF_SIZE);
-        printf("Return response = %s with valread=%d\n", buffer, valread);
-    }
-    else
-    {
-        printf("Exit without calling RPC");
-    }
-#endif
     // Terminate connection
     close(sock);
 

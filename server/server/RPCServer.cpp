@@ -197,17 +197,6 @@ bool RPCServer::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
     string userNameString = arrayTokens[USERNAMETOKEN];
     string passwordString = arrayTokens[PASSWORDTOKEN];
     char szBuffer[80];
-#if 0
-    // Our Authentication Logic. Looks like Mike/Mike is only valid combination
-    if ((userNameString == "MIKE") && (passwordString == "MIKE"))
-    {
-        strcpy(szBuffer, "1;"); // Connected
-    }
-    else
-    {
-        strcpy(szBuffer, "0;"); // Not Connected
-    }
-#endif
     strcpy(szBuffer, "successful");
     // Send Response back on our socket
     int nlen = strlen(szBuffer);
@@ -229,7 +218,7 @@ bool RPCServer::ProcessStatusRPC()
 bool RPCServer::ProcessDisconnectRPC()
 {
     char szBuffer[16];
-    strcpy(szBuffer, "disconnect");
+    strcpy(szBuffer, "successful");
     // Send Response back on our socket
     int nlen = strlen(szBuffer);
     szBuffer[nlen] = 0;
