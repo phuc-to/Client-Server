@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <sys/socket.h> // UNIX socket structs
 #include <stdlib.h>
-#include <netinet/in.h> // For onstants and structs for INTERNET domain addresses  
+#include <netinet/in.h> // For constants and structs for INTERNET domain addresses  
 #include <string.h>
 #include <vector>
 #include <iterator>

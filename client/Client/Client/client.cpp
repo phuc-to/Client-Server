@@ -143,7 +143,7 @@ int main(int argc, char const* argv[])
                 break;
             case 2:
                 msg = "mealByTime;";
-                cout << "What day of time are you looking at? ";
+                cout << "What time of day are you looking at? ";
                 cin >> info;
                 msg += info;
                 break;
