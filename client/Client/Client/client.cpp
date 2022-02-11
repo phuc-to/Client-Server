@@ -1,4 +1,18 @@
-// Client side C/C++ program to demonstrate Socket programming
+/**
+ @file  Client side = file for MealTime socket programming project
+ @authors Phuc T, Narissa T, Kristen K
+ @date 2/10/22
+ @version 1.0
+ @reference https://www.geeksforgeeks.org/socket-programming-cc/
+ @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
+
+ GNU C functions
+ setsockopt function: setsockopt(int socket, int level, int optname, int optval, socklen_t optlen)
+ bind function: bind(int socket, struct sockaddr*address, socklen_t length)
+ listen function: listen(int socket, int number of connection requests allowed in queue)
+ read function: read(int socket, buffer, buffer size)
+ */
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
