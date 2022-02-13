@@ -1,7 +1,7 @@
 /**
  @file  Client side file for MealTime socket programming project
  @authors Phuc T, Narissa T, Kristen K
- @date 3/10/22
+ @date 2/10/22
  @version 1.0
  @reference https://www.geeksforgeeks.org/socket-programming-cc/
  @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
@@ -22,6 +22,7 @@
 #include <vector>
 #include <iterator>
 #include <iostream>
+
 
 using namespace std;
 
@@ -44,27 +45,33 @@ int main(int argc, char const* argv[])
 {
     
     int cliSocket = 0;                            // init client socket
+    // struct sockaddr_in serv_addr; // defined later in connectToServer
+
+    const char* logoffRPC = "disconnect;";
+
     char buffer[BUFF_SIZE] = { 0 };              // init buffer
     const char* serverAddress = argv[1];         // holds server IP address
-    const int PORT = atoi(argv[2]);              // holds port
-	const char* logoffRPC = "disconnect;";
+    //const int PORT = atoi(argv[2]);              // holds port
 
+	// hard coded port for testing
+	const int PORT = 10328;                      
 
-	// holds status of connectToServer attempt
+	// Attempt to connect to server
     bool bConnect = connectToServer(serverAddress, PORT, cliSocket);
-	int valsend;  // holds number of bytes sent to server
-	int valread;  // holds number of bytes rec'd from server
 
     if (bConnect == true)
     {
-
+        
+        int valsend;
+        int valread;
+        
         //Main program
         string msg;
         welcome();
         optionList();
 
         //Validate account
-		//TODO: PT Modularlize user log in into a separate function
+
         bool valid = false;
         while (!valid) {
             int option;
@@ -160,7 +167,6 @@ int main(int argc, char const* argv[])
                 cout << endl;
                 const char* curMsg = msg.c_str();
                 strcpy(buffer, curMsg);
-				//TODO : PT something wrong happens here when I try to exit
                 valsend = send(cliSocket, buffer, strlen(buffer), 0);
                 if (meal == 4)
                     cout << "Disconnect message sent" << endl;
@@ -204,6 +210,7 @@ int main(int argc, char const* argv[])
     return 0;
 }
 
+//TODO: PT Build out program description and instructions. 
 void welcome()
 {
     cout << "Welcome to your Meal Generator." << endl;
@@ -244,36 +251,29 @@ void parseTokens(char* buffer, std::vector<std::string>& a)
 */
 bool connectToServer(const char* serverAddress, int port, int& sock)
 {
-	// init server socket address struct 
 	struct sockaddr_in serv_addr;
-	serv_addr.sin_family = NAMESPACE;
-	serv_addr.sin_port = htons(port);
-
-	// create client socket, exit if error creating socket, else print success msg
 	if ((sock = socket(NAMESPACE, STYLE, PROTOCOL)) < 0)
 	{
 		printf("\nClient: Socket creation error\n");
-		return -1;
+		return false;
 	}
-	else
-		printf("\nClient: Socket creation successful\n");
 
-	// TODO: PT This code block causes segmentation fault
-	// convert IPv4 and IPv6 addresses from text to binary form
-	//if (inet_pton(NAMESPACE, serverAddress, &serv_addr.sin_addr) < 0)
-	//{
-	//	printf("\nClient: Invalid IP address or address not supported\n");
-	//	return -1;
-	//}
+	serv_addr.sin_family = NAMESPACE;
+	serv_addr.sin_port = htons(port);
 
-	// connect to server, exit if error connecting, else print success msg
+	// TODO: PT SEG FAULT AT INET_PTON
+	 //Convert IPv4 and IPv6 addresses from text to binary form
+	if (inet_pton(NAMESPACE, serverAddress, &serv_addr.sin_addr) <= 0)
+	{
+		printf("\nClient: Invalid address/Address not supported \n");
+		return false;
+	}
+
 	if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
 	{
-		printf("\nClient: Connection to server failed, please try again\n");
-		return -1;
+		printf("\nClient: Connection Failed\n");
+		return false;
 	}
-	else
-		printf("\nClient: Client server connection established\n");
 
-	return 0;
+	return true;
 }
