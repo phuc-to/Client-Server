@@ -19,9 +19,6 @@
 
 using namespace std; 
 
-/**
- * Sever class header file.  
-*/
 class RPCServer
 {
 
