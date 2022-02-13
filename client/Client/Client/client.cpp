@@ -1,7 +1,7 @@
 /**
  @file  Client side file for MealTime socket programming project
  @authors Phuc T, Narissa T, Kristen K
- @date 2/10/22
+ @date 3/10/22
  @version 1.0
  @reference https://www.geeksforgeeks.org/socket-programming-cc/
  @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
@@ -44,29 +44,27 @@ int main(int argc, char const* argv[])
 {
     
     int cliSocket = 0;                            // init client socket
-    struct sockaddr_in serv_addr;
-
-    const char* logoffRPC = "disconnect;";
-
     char buffer[BUFF_SIZE] = { 0 };              // init buffer
     const char* serverAddress = argv[1];         // holds server IP address
     const int PORT = atoi(argv[2]);              // holds port
+	const char* logoffRPC = "disconnect;";
 
+
+	// holds status of connectToServer attempt
     bool bConnect = connectToServer(serverAddress, PORT, cliSocket);
+	int valsend;  // holds number of bytes sent to server
+	int valread;  // holds number of bytes rec'd from server
 
     if (bConnect == true)
     {
-        
-        int valsend;
-        int valread;
-        
+
         //Main program
         string msg;
         welcome();
         optionList();
 
         //Validate account
-
+		//TODO: PT Modularlize user log in into a separate function
         bool valid = false;
         while (!valid) {
             int option;
@@ -162,6 +160,7 @@ int main(int argc, char const* argv[])
                 cout << endl;
                 const char* curMsg = msg.c_str();
                 strcpy(buffer, curMsg);
+				//TODO : PT something wrong happens here when I try to exit
                 valsend = send(cliSocket, buffer, strlen(buffer), 0);
                 if (meal == 4)
                     cout << "Disconnect message sent" << endl;
@@ -205,7 +204,6 @@ int main(int argc, char const* argv[])
     return 0;
 }
 
-//TODO: PT Build out program description and instructions. 
 void welcome()
 {
     cout << "Welcome to your Meal Generator." << endl;
