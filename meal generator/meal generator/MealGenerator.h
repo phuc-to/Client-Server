@@ -1,25 +1,87 @@
 /**
- @file  MealGenerator class header for MealTime socket programming project
+ @file  MealGenerator class header file for MealTime socket programming project
  @authors Phuc T, Narissa T, Kristen K
- @date 2/8/22
+ @date 2/12/22
  @version 1.0
- @reference https://www.geeksforgeeks.org/socket-programming-cc/
- @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
  */
 #pragma once
 #include <vector>
+#include <string>
 
 using namespace std;
 
 class MealGenerator
+{
 
 private:
-	private vector 
+	private vector<Meal> meals;
 
+	/*
+    Function:   randomize
+	Purpose:    Private function to help the getRandomMeal function
+	            return the name of a random meal.
+	Parameter:  the number of available meal options
+	Returns:    a random number within the number of available 
+	            meal options.
+	*/
+	int randomize(int)();
+
+	
+	/*
+	Private static variable used to ensure that we only set 
+    the seed value for the rand() function once.
+	*/
+	static bool isSeeded;
 
 public:
-		MealGenerator();
+	 /*
+     Default constructor.
+     Initializes the list of meals to the default options in the
+     Meal Generator.
+     */
+	    MealGenerator();
 
-		~MealGenerator;
+		~MealGenerator();
 
-		addMeal(string time, string cuisine);
+		/*
+		Function:   addMeal
+		Purpose:    adds a meal to the list of meals in the Meal Generator.
+		Parameters: the name of the meal
+				    the time when the meal is eaten (breakfast, lunch, or dinner)
+				    the type of cuisine for the meal
+	    */
+		addMeal(string, string, string);
+
+		/*
+		Function:   getRandomMeal
+		Purpose:    returns the name of random meal from the list
+		            of meals in Meal Generator.
+		Returns:    the name of the random meal;
+		*/
+		string getRandomMeal();
+
+		/*
+		Function:   getRandomMealByTime
+		Purpose:    returns the name of random meal from the list
+		            of meals in Meal Generator with the time from the input parameter, 
+					or returns a statement saying that there were no meals with the
+	                time from the input parameter.
+					// QUESTION FOR GROUP - is this how we want to handle there
+					// being no meals matching the input cuisine/time?
+		Parameter:  the time when the meal is eaten (breakfast, lunch, or dinner).
+		Returns:    the name of the random meal.
+		*/
+		string getRandomMealByTime(string);
+
+		/*
+        Function:   getRandomMealByCuisine
+		Purpose:    returns the name of random meal from the list
+		            of meals in Meal Generator with the cuisine type
+					from the input parameter, or returns a statement 
+					saying that there were no meals with the cuisine 
+					type from the input parameter.
+		Parameters: the cuisine type of the meal.
+		Returns:    the name of the random meal.
+        */
+		string getRandomMealByCuisine(string);
+};
