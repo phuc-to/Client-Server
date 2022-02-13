@@ -8,6 +8,8 @@
 #pragma once
 #include <string>
 
+using namespace std;
+
 class Meal
 {
 private:
@@ -32,19 +34,19 @@ public:
 	Function:   getName
 	Returns:    the cuisine type for the meal.
 	*/
-	string getName() {}
+	string getName();
 	
 	/*
 	Function:   getCuisine
 	Returns:    the cuisine type for the meal.
 	*/
-	string getCuisine() {}
+	string getCuisine();
 
 	/*
 	Function:   getTime
 	Returns:    the cuisine type for the meal.
 	*/
-	string getTime() {}
+	string getTime();
 
 };
 

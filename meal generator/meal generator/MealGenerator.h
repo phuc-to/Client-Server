@@ -7,6 +7,8 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <iostream>
+#include "Meal.h"
 
 using namespace std;
 
@@ -14,7 +16,7 @@ class MealGenerator
 {
 
 private:
-	private vector<Meal> meals;
+	vector<Meal> meals;
 
 	/*
     Function:   randomize
@@ -24,7 +26,7 @@ private:
 	Returns:    a random number within the number of available 
 	            meal options.
 	*/
-	int randomize(int)();
+	int randomize(int);
 
 	
 	/*
@@ -50,7 +52,7 @@ public:
 				    the time when the meal is eaten (breakfast, lunch, or dinner)
 				    the type of cuisine for the meal
 	    */
-		addMeal(string, string, string);
+		void addMeal(string, string, string);
 
 		/*
 		Function:   getRandomMeal
@@ -84,4 +86,7 @@ public:
 		Returns:    the name of the random meal.
         */
 		string getRandomMealByCuisine(string);
+
+		//Print function for testing
+		void print();
 };

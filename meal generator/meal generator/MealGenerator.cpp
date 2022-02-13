@@ -6,11 +6,12 @@
  @version 1.0
  */
 #include <string>
+#include <iostream>
 #include "MealGenerator.h"
 
 bool MealGenerator::isSeeded = false;
 
-MealGenerator::randomize(int options) {
+int MealGenerator::randomize(int options) {
 	if (!isSeeded) {
 		srand(time(NULL));
 		isSeeded = true;
@@ -144,52 +145,50 @@ MealGenerator::MealGenerator() {
 
 MealGenerator::~MealGenerator() {};
 
-MealGenerator::addMeal(string name, string time, string cuisine) {
+void MealGenerator::addMeal(string name, string time, string cuisine) {
 	// Add code to check for a repeat meal
 	
 	// New keyword used - do we need to do anything to deallocate memory?
 	// Is the new keyword actually necessary?
-	Meal dish = new Meal(name, time, cuisine);
+	Meal dish(name, time, cuisine);
 	meals.push_back(dish);
 }
 
 string MealGenerator::getRandomMeal() {
 	int i = randomize(meals.size());
-	return mealsByCuisine.at(i).getName();
+	return meals.at(i).getName();
 }
 
 string MealGenerator::getRandomMealByCuisine(string cuisine) {
-	vector<Meal> mealsByCuisine;
-	for (int i = 0; i < meals.size(); i++) {
-		if (cuisine == meals.at(i).getCuisine()) {
-			mealsByCuisine.push_back(meals.at(i))
-		}
-	}
-	int options = mealsByCuisine.size();
-	if (options == 0) {
-		return "There is no meal in the list with the cuisine type" + cuisine
-	}
-	else {
-		int i = randomize(options);
-		return mealsByCuisine.at(i).getName();
-	}	
+    vector<Meal> mealsByCuisine;
+    for (int i = 0; i < meals.size(); i++) {
+        if (cuisine == meals.at(i).getCuisine()) {
+            mealsByCuisine.push_back(meals.at(i));
+        }
+    }
+    int options = mealsByCuisine.size();
+    if (options == 0) {
+        return "There is no meal in the list with the cuisine type" + cuisine;
+    }
+    else {
+        int i = randomize(options); return mealsByCuisine.at(i).getName();
+    }
 }
 
 string MealGenerator::getRandomMealByTime(string time) {
-	vector<Meal> mealsByTime;
-	for (int i = 0; i < meals.size(); i++) {
-		if (time == meals.at(i).getCuisine()) {
-			mealsByTime.push_back(meals.at(i))
-		}
-	}
-	int options = mealsByTime.size();
-	if (options == 0) {
-		return "There is no meal in the list with time" + time;
-	}
-	else {
-		int i = randomize(options);
-		return mealsByTime.at(i).getName();
-	}
+    vector<Meal> mealsByTime;
+    for (int i = 0; i < meals.size(); i++) {
+        if (time == meals.at(i).getTime()) {
+            mealsByTime.push_back(meals.at(i));
+        }
+    }
+    int options = mealsByTime.size();
+    if (options == 0) {
+        return "There is no meal in the list with the cuisine type" + time;
+    }
+    else {
+        int i = randomize(options); return mealsByTime.at(i).getName();
+    }
 }
 
 

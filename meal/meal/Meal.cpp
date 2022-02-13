@@ -12,14 +12,22 @@ Meal::Meal() {};
 
 Meal::~Meal() {};
 
-Meal::Meal(string name, string cuisine, string time) {
-	this.name = name;
-	this.cuisine = cusine;
-	this.time = time;
+Meal::Meal(string n, string t, string c) {
+	name = n;
+	time = t;
+	cuisine = c;
 }
 
 string Meal::getName() {
 	return name;
+}
+
+string Meal::getTime() {
+	return time;
+}
+
+string Meal::getCuisine() {
+	return cuisine;
 }
 
 
