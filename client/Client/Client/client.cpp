@@ -54,7 +54,7 @@ int main(int argc, char const* argv[])
     //const int PORT = atoi(argv[2]);              // holds port
 
 	// hard coded port for testing
-	const int PORT = 10328;                      
+	const int PORT = 10327;                      
 
 	// Attempt to connect to server
     bool bConnect = connectToServer(serverAddress, PORT, cliSocket);

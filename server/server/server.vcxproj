@@ -76,9 +76,13 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Meal.cpp" />
+    <ClCompile Include="MealGenerator.cpp" />
     <ClCompile Include="RPCServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Meal.h" />
+    <ClInclude Include="MealGenerator.h" />
     <ClInclude Include="RPCServer.h" />
   </ItemGroup>
   <ItemDefinitionGroup />

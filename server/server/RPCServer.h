@@ -17,6 +17,9 @@
 #include <vector>
 #include <iterator>
 
+
+#include "MealGenerator.h"
+
 using namespace std; 
 
 class RPCServer
@@ -73,6 +76,8 @@ class RPCServer
 		char* m_serverIP;              // server's IP address, from main
 		int m_port;                    // server's port, from main
 		struct sockaddr_in m_address;  // server socket address struct
+
+		MealGenerator* mg;
 
 		// First one in this function should be a connect, and it 
 		// will continue try to process RPC's until a Disconnect happens

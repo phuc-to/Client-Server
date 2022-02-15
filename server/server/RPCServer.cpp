@@ -35,6 +35,7 @@ RPCServer::RPCServer(const char* serverIP, int port)
     m_rpcCount = 0;
     m_serverIP = (char*)serverIP;
     m_port = port;
+    mg = new MealGenerator();
 };
 
 // Destructor
@@ -267,12 +268,19 @@ bool RPCServer::ProcessDisconnectRPC()
 */
 bool RPCServer::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 {
+    const int RPCTOKEN = 0;
     const int INFOTOKEN = 1;
 
     // Strip out tokens 1 and 2 (username, password)
+    string RPC = arrayTokens[RPCTOKEN];
     string info = arrayTokens[INFOTOKEN];
     char szBuffer[80];
-    strcpy(szBuffer, "Instant Noodle");
+    if (RPC == "mealRandom")
+        strcpy(szBuffer, (mg->getRandomMeal()).c_str());
+    else if (RPC == "mealByTime")
+        strcpy(szBuffer, (mg->getRandomMealByTime(info)).c_str());
+    else
+        strcpy(szBuffer, (mg->getRandomMealByCuisine(info)).c_str());
     // Send Response back on our socket
     int nlen = strlen(szBuffer);
     szBuffer[nlen] = 0;
