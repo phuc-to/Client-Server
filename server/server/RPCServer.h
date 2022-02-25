@@ -2,9 +2,7 @@
  @file  RPCServer.h
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
- @version 1.0
- @reference https://www.geeksforgeeks.org/socket-programming-cc/
- @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
+ @version 2.0
  */
 
 #pragma once
@@ -45,6 +43,7 @@ class RPCServer
 		*/
 		bool StartServer();
 
+
 		/** Server file descriptor accepts new connection requests by listening on it's IP address.
 		@pre A server file descriptor in listening mode (successful call to StartServer).
 		@post Upon receipt of connection request, creates new socket to process RPC. Calls ProcessRPC. 
@@ -52,16 +51,6 @@ class RPCServer
 
 		*/
 		bool ListenForClient();
-
-		/** String processing helper function to Process RPC. Delimits and tokenizes buffer. Stores tokens
-			in vector. 
-		@param buffer Charcter array. 
-		@param a String vector holds tokens. 
-		@pre Buffer containing 0 to many tokens in the form 'abc;def;jkl'. 
-		@post a Vector contains tokenized portions of original buffer. 
-		*/
-		void ParseTokens(char* buffer, vector<string>& a);
-
 
 	private:
 		int m_rpcCount;                // for metrics

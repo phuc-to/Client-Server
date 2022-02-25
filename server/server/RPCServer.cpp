@@ -2,14 +2,8 @@
  @file RPCServer.cpp
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
- @version 1.0
- @reference https://www.geeksforgeeks.org/socket-programming-cc/
- @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
+ @version 2.0
  */
-
-
-#include "RPCServer.h"
-#include "RPCImpl.h"
 
 #include <unistd.h>
 #include <iostream>     // For C++ IO.
@@ -20,9 +14,29 @@
 #include <string.h>
 #include <vector>
 #include <iterator>
+#include <pthread.h>
 
+#include "RPCServer.h"
+#include "RPCImpl.h"
 
 using namespace std;
+
+// TEST THREAD FUNCTION A normal C function that is executed as a thread 
+// when its name is specified in pthread_create()
+void* myThreadFun(void* vargp)
+{
+
+	sleep(1);
+
+	int socket = *(int *)vargp;
+	printf("Printing GeeksQuiz from Thread \n");
+	RPCImpl *rpcImplObj = new RPCImpl(socket);
+	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
+	printf("Done with Thread");
+
+	return NULL;
+
+}
 
 /**
 Creates new instance of the RPCServer.
@@ -41,9 +55,8 @@ Destructor for instance of RPCServer.
 RPCServer::~RPCServer() {};
 
 /*
-* StartServer will create a server on a Port that was passed in, and create a server side socket
+Creates a server on a port that was passed in and creates a server side socket.
 */
-
 bool RPCServer::StartServer()
 {
 
@@ -104,186 +117,35 @@ bool RPCServer::StartServer()
     return true; // server started successfully
 }
 
-
-// Server file descriptor accepts new connection requests by listening on it's IP address.
-// Creates new socket to handle RPC.
+/** 
+Server file descriptor accepts new connection requests by listening on it's IP address. 
+Creates new socket to handle RPC.
+*/
 bool RPCServer::ListenForClient()
 {
+	int addrlen = sizeof(m_address);
 
-    int addrlen = sizeof(m_address);
+	for (;;) // Endless loop. Probably good to have some type of controlled shutdown
+	{
+		if ((m_socket = accept(m_server_fd, (struct sockaddr*)&m_address,
+			(socklen_t*)&addrlen)) < 0)
+		{
+			perror("accept");
+			exit(EXIT_FAILURE);
+		}
 
-    if ((m_socket = accept(m_server_fd, (struct sockaddr*)&m_address,
-        (socklen_t*)&addrlen)) < 0)
-    {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
+		// Launch Thread to Process RPC
+		// We will hold the thread ID into an array. Who know's we might want to join on them later
 
-    this->ProcessRPC();
-    return true;
+		pthread_t thread_id;
+		printf("Launching Thread\n");
+		int socket = m_socket;
+		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
+		// TODO Probably should save thread_id into some type of array
+		//this->ProcessRPC();
+	}
+	return true;
 }
 
-/*
-* Going to populate a String vector with tokens extracted from the string the client sent.
-* The delimter will be a ;
-* An example buffer could be "connect;mike;mike;"
-*/
-void RPCServer::ParseTokens(char* buffer, vector<string>& a)
-{
-    char* token;
-    char* rest = (char*)buffer;
 
-    while ((token = strtok_r(rest, ";", &rest)))
-    {
-        printf("%s\n", token);
-        a.push_back(token);
-    }
 
-    return;
-}
-
-/*
-* ProcessRPC will examine buffer and will essentially control which RPC calls
-* are made. The function invokes the ParseTokens method to read the message
-* sent by the client, and then invokes the appropriate RPC method call.
-* 
-*/
-bool RPCServer::ProcessRPC()
-{
-    const char* rpcs[] = { "connect", "disconnect", "status" };
-    char buffer[1024] = { 0 };
-    std::vector<std::string> arrayTokens;
-    int valread = 0;
-    bool bConnected = false;
-    bool bStatusOk = true;
-    const int RPCTOKEN = 0;
-    bool bContinue = true;
-
-    while ((bContinue) && (bStatusOk))
-    {
-        // Should be blocked when a new RPC has not called us yet
-        if ((valread = read(this->m_socket, buffer, sizeof(buffer))) <= 0)
-        {
-            printf("errno is %d\n", errno);
-            break;
-        }
-        printf("%s\n", buffer);
-
-        arrayTokens.clear();
-        this->ParseTokens(buffer, arrayTokens);
-
-        // string statements are not supported with a switch, so using if/else logic to dispatch
-        string aString = arrayTokens[RPCTOKEN];
-
-        if ((bConnected == false) && (aString == "connect"))
-        {
-            bStatusOk = ProcessConnectRPC(arrayTokens);  // Connect RPC
-            if (bStatusOk == true)
-                bConnected = true;
-        }
-
-        else if ((bConnected == true) && (aString == "disconnect"))
-        {
-            bStatusOk = ProcessDisconnectRPC();
-            printf("We are going to terminate this endless loop\n");
-            bContinue = false; // We are going to leave this loop, as we are done
-        }
-
-        else if ((bConnected == true) && (aString == "status"))
-            bStatusOk = ProcessStatusRPC();   // Status RPC
-        
-        else if ((bConnected == true) && (aString == "mealRandom"))
-        {
-            bStatusOk = ProcessMealRPC(arrayTokens);
-        }
-
-        else if ((bConnected == true) && (aString == "mealByTime"))
-        {
-            bStatusOk = ProcessMealRPC(arrayTokens);
-        }
-
-        else if ((bConnected == true) && (aString == "mealByCuisine"))
-        {
-            bStatusOk = ProcessMealRPC(arrayTokens);
-        }
-        else
-        {
-            // Not in our list, perhaps, print out what was sent
-        }
-
-    }
-
-    return true;
-}
-
-/*
-* Connects the 
-*/
-bool RPCServer::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
-{
-    const int USERNAMETOKEN = 1;
-    const int PASSWORDTOKEN = 2;
-
-    // Strip out tokens 1 and 2 (username, password)
-    string userNameString = arrayTokens[USERNAMETOKEN];
-    string passwordString = arrayTokens[PASSWORDTOKEN];
-    char szBuffer[80];
-    strcpy(szBuffer, "successful");
-    // Send Response back on our socket
-    int nlen = strlen(szBuffer);
-    szBuffer[nlen] = 0;
-    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-
-    return true;
-}
-
-/* 
-* Returns the status of the RPC server.
-*/
-bool RPCServer::ProcessStatusRPC()
-{
-    return true;
-}
-
-/*
-* Disconnects server socket from the lcient socket, and sends client 
-* message stating disconnect was successful. 
-*/
-bool RPCServer::ProcessDisconnectRPC()
-{
-    char szBuffer[16];
-    strcpy(szBuffer, "successful");
-    // Send Response back on our socket
-    int nlen = strlen(szBuffer);
-    szBuffer[nlen] = 0;
-    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-    return true;
-}
-
-/*
-* Returns a buffer containing the information
-* for the meal that meets the client's submitted
-* criteria. 
-*/
-bool RPCServer::ProcessMealRPC(std::vector<std::string>& arrayTokens)
-{
-    const int RPCTOKEN = 0;
-    const int INFOTOKEN = 1;
-
-    // Strip out tokens 1 and 2 (username, password)
-    string RPC = arrayTokens[RPCTOKEN];
-    string info = arrayTokens[INFOTOKEN];
-    char szBuffer[80];
-    if (RPC == "mealRandom")
-        strcpy(szBuffer, (mg->getRandomMeal()).c_str());
-    else if (RPC == "mealByTime")
-        strcpy(szBuffer, (mg->getRandomMealByTime(info)).c_str());
-    else
-        strcpy(szBuffer, (mg->getRandomMealByCuisine(info)).c_str());
-    // Send Response back on our socket
-    int nlen = strlen(szBuffer);
-    szBuffer[nlen] = 0;
-    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-
-    return true;
-}
