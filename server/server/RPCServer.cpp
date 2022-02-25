@@ -1,20 +1,15 @@
 /**
- @file  Server side class file for MealTime socket programming project
+ @file RPCServer.cpp
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
  @version 1.0
  @reference https://www.geeksforgeeks.org/socket-programming-cc/
  @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
-
-  GNU C functions 
- setsockopt function: setsockopt(int socket, int level, int optname, int optval, socklen_t optlen)
- bind function: bind(int socket, struct sockaddr*address, socklen_t length)
- listen function: listen(int socket, int number of connection requests allowed in queue)
- read function: read(int socket, buffer, buffer size)
  */
 
 
 #include "RPCServer.h"
+#include "RPCImpl.h"
 
 #include <unistd.h>
 #include <iostream>     // For C++ IO.
@@ -29,16 +24,20 @@
 
 using namespace std;
 
-// Constructor
+/**
+Creates new instance of the RPCServer.
+*/
 RPCServer::RPCServer(const char* serverIP, int port)
 {
     m_rpcCount = 0;
     m_serverIP = (char*)serverIP;
     m_port = port;
-    mg = new MealGenerator();
+    mg = new MealGenerator();  // init new MG object
 };
 
-// Destructor
+/**
+Destructor for instance of RPCServer. 
+*/
 RPCServer::~RPCServer() {};
 
 /*

@@ -1,5 +1,5 @@
 /**
- @file  Server side driver for MealTime socket programming project
+ @file  main.cpp
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
  @version 1.0

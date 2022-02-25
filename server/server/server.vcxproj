@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClInclude Include="Meal.h" />
     <ClInclude Include="MealGenerator.h" />
+    <ClInclude Include="RPCImpl.h" />
     <ClInclude Include="RPCServer.h" />
   </ItemGroup>
   <ItemDefinitionGroup />

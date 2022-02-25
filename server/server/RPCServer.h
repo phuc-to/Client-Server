@@ -1,5 +1,5 @@
 /**
- @file  Server side class header for MealTime socket programming project
+ @file  RPCServer.h
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
  @version 1.0
@@ -62,12 +62,6 @@ class RPCServer
 		*/
 		void ParseTokens(char* buffer, vector<string>& a);
 
-		/** 
-		* Function for processing all RPC calls. 
-		* @pre Buffer sent by the client.
-		* @post The appropriate RPC call has been invoked.
-		*/
-		bool ProcessRPC();
 
 	private:
 		int m_rpcCount;                // for metrics
@@ -77,15 +71,6 @@ class RPCServer
 		int m_port;                    // server's port, from main
 		struct sockaddr_in m_address;  // server socket address struct
 
-		MealGenerator* mg;
-
-		// First one in this function should be a connect, and it 
-		// will continue try to process RPC's until a Disconnect happens
-		bool ProcessConnectRPC(vector<string>& arrayTokens);
-		bool ProcessMealRPC(vector<string>& arrayTokens);
-		bool ProcessStatusRPC();
-		bool ProcessDisconnectRPC();
-
-
+		MealGenerator* mg;              // private MG object
 };
 
