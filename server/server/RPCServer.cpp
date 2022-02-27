@@ -124,6 +124,8 @@ Creates new socket to handle RPC.
 bool RPCServer::ListenForClient()
 {
 	int addrlen = sizeof(m_address);
+	vector<pthread_t> thread_ids;
+	pthread_t thread_id;
 
 	for (;;) // Endless loop. Probably good to have some type of controlled shutdown
 	{
@@ -137,15 +139,20 @@ bool RPCServer::ListenForClient()
 		// Launch Thread to Process RPC
 		// We will hold the thread ID into an array. Who know's we might want to join on them later
 
-		pthread_t thread_id;
+		thread_ids.push_back(thread_id);
 		printf("Launching Thread\n");
 		int socket = m_socket;
 		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
-		// TODO Probably should save thread_id into some type of array
+		
+
 		//this->ProcessRPC();
+		//RPCImpl::ProcessRPC(socket);
+
 	}
 	return true;
 }
+
+#include "RPCImpl.h"
 
 
 

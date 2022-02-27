@@ -17,6 +17,7 @@
 
 
 #include "MealGenerator.h"
+#include "RPCImpl.h" 
 
 using namespace std; 
 
