@@ -79,7 +79,7 @@ bool RPCServer::StartServer()
 		exit(EXIT_FAILURE);
     }
 	else
-		cout << "\nServer: Socket creation successful\n";
+		cout << "\nserver: socket creation successful\n";
 
 
 	// TODO: NT Adjust the options when we switch to multithreading
@@ -103,7 +103,7 @@ bool RPCServer::StartServer()
 		exit(EXIT_FAILURE);
     }
 	else
-		cout << "\nServer: Socket binding successful\n";
+		cout << "\nserver: socket binding successful\n";
 
 	// Enable connection requests on server file descriptor, exit on error
     if (listen(m_server_fd, BACKLOG) < 0)
@@ -112,7 +112,7 @@ bool RPCServer::StartServer()
 		exit(EXIT_FAILURE);
     }
 	else
-		cout << "\nServer: Server file descriptor listening for connection...\n";
+		cout << "\nserver: server file descriptor listening for connection...\n";
 
     return true; // server started successfully
 }
@@ -137,22 +137,21 @@ bool RPCServer::ListenForClient()
 		}
 
 		// Launch Thread to Process RPC
-		// We will hold the thread ID into an array. Who know's we might want to join on them later
-
+		//TODO: thread ID into an array. Who know's we might want to join on them later
 		thread_ids.push_back(thread_id);
 		printf("Launching Thread\n");
 		int socket = m_socket;
-		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
-		
 
-		//this->ProcessRPC();
-		//RPCImpl::ProcessRPC(socket);
+		// Create new thread 
+		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
+		RPCImpl newRPC = RPCImpl(socket);
+		newRPC.ProcessRPC();
+
 
 	}
 	return true;
 }
 
-#include "RPCImpl.h"
 
 
 

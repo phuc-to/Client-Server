@@ -34,6 +34,12 @@ public:
 	*/
 	bool UserLookup(const string username, const string password);
 
+	/**
+	AssignAdmin stores admin status of users stored in userLookupMap
+	@param key, "usernamepassword"
+	@param status, true for admin, false for normal user
+	*/
+	bool AssignAdmin(const string key);
 
 private: 
 	string username;

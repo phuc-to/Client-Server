@@ -198,6 +198,7 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	string passwordString = arrayTokens[PASSWORDTOKEN];
 	char szBuffer[80];
 
+	// TODO: Remove preprocessor block at end of project
 #if 0
 	// TODO NT CALL AUTH CLASS HERE 
 	// Our Authentication Logic. Looks like Mike/Mike is only valid combination
