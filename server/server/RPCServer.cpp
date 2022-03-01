@@ -21,6 +21,8 @@
 
 using namespace std;
 
+
+
 // TEST THREAD FUNCTION A normal C function that is executed as a thread 
 // when its name is specified in pthread_create()
 void* myThreadFun(void* vargp)
@@ -33,7 +35,6 @@ void* myThreadFun(void* vargp)
 	RPCImpl *rpcImplObj = new RPCImpl(socket);
 	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
 	printf("Done with Thread");
-
 	return NULL;
 
 }

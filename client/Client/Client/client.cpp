@@ -64,6 +64,9 @@ int main(int argc, char const* argv[])
         
         int valsend;
         int valread;
+        vector<string> arrayTokens;
+        const int STATUSTOKEN = 0;
+        const int INFOTOKEN = 1;
         
         //Main program
         string msg;
@@ -101,8 +104,10 @@ int main(int argc, char const* argv[])
 
                 sleep(2);
 
-                string returnMsg = buffer;
-                string error_code = returnMsg.substr(0, returnMsg.find(deli));
+                arrayTokens.clear();
+                parseTokens(buffer, arrayTokens);
+                string error_code = arrayTokens[STATUSTOKEN];
+
                 if (error_code == "successful")
                 {
                     valid = true;
@@ -138,31 +143,43 @@ int main(int argc, char const* argv[])
             cout << "Type in your option: ";
             cin >> meal;
             switch (meal) {
+            case 0:
+                valid = !valid;
+                msg = "disconnect;";
+                break;
             case 1:
-                msg = "mealRandom;";
+                msg = "meal;Random;";
                 break;
             case 2:
-                msg = "mealByTime;";
+                msg = "meal;ByTime;";
                 cout << "What time of day are you looking at? ";
                 cin >> info;
                 msg += info + ";";
                 break;
             case 3:
-                msg = "mealByCuisine;";
+                msg = "meal;ByCuisine;";
                 cout << "What cuisine do you want? ";
                 cin >> info;
                 msg += info + ";";
                 break;
             case 4:
-                valid = !valid;
-                msg = "disconnect;";
+                msg = "addMeal;";
+                cout << "What is the name of the meal? ";
+                cin >> info;
+                msg += info + ";";
+                cout << "What is the time of the day for " + info;
+                cin >> info;
+                msg += info + ";";
+                cout << "Where does it originate from? ";
+                cin >> info;
+                msg += info + ";";
                 break;
             default:
                 valid = !valid;
                 cout << "Invalid option. Let's start again!" << endl;
                 meal = 5;
             }
-            if ((meal <= 4) && (meal > 0))
+            if ((meal <= 4) && (meal >= 0))
             {
                 cout << endl;
                 const char* curMsg = msg.c_str();
@@ -172,29 +189,50 @@ int main(int argc, char const* argv[])
                     cout << "Disconnect message sent" << endl;
                 else
                     cout << "Your meal request has been sent" << endl;
+
                 sleep(2);
+
                 valread = read(cliSocket, buffer, BUFF_SIZE);
-                if (meal == 4)
+                arrayTokens.clear();
+                parseTokens(buffer, arrayTokens);
+                string error_code = arrayTokens[STATUSTOKEN];
+
+                if (meal == 0)
                 {
                     cout << "You are disconnected" << endl;
                 }
                 else
                 {
-                    cout << "The meal for you would be " << buffer << endl << endl;
-
-                    cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
-                    cin >> meal;
-                    if (meal == 2)
+                    if (meal != 4)
                     {
-                        valid = !valid;
+                        if (error_code == "successful")
+                        {
+                            string mealSuggestion = arrayTokens[INFOTOKEN];
+                            cout << "The meal for you would be " << mealSuggestion << endl << endl;
 
-                        strcpy(buffer, logoffRPC);
-                        valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                        printf("Disconnect message sent");
-                        sleep(2);
-                        valread = read(cliSocket, buffer, BUFF_SIZE);
-                        cout << "You are disconnected" << endl;
+                            cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
+                            cin >> meal;
+                            if (meal == 2)
+                            {
+                                valid = !valid;
+
+                                strcpy(buffer, logoffRPC);
+                                valsend = send(cliSocket, buffer, strlen(buffer), 0);
+                                printf("Disconnect message sent");
+                                sleep(2);
+                                valread = read(cliSocket, buffer, BUFF_SIZE);
+                                cout << "You are disconnected" << endl;
+                            }
+                        }
+                        else
+                        {
+                            string error = arrayTokens[INFOTOKEN];
+                            cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
+                            cout << "Please try again" << endl << endl;
+                        }
                     }
+                    else
+                        cout << "You succesfully added a meal" << endl << endl;
                 }
             }
         }
@@ -226,10 +264,11 @@ void optionList()
 
 void mealOptions()
 {
-    cout << "What kind of meal are you looking for? 4 to Exit" << endl;
+    cout << "What kind of meal are you looking for? 0 to Exit" << endl;
     cout << "1. A random meal" << endl;
     cout << "2. A meal by time" << endl;
     cout << "3. A meal by cuisine" << endl;    
+    cout << "4. Perhaps you want to add a meal by yourself?" << endl;
 }
 
 void parseTokens(char* buffer, std::vector<std::string>& a)
@@ -239,7 +278,6 @@ void parseTokens(char* buffer, std::vector<std::string>& a)
 
 	while ((token = strtok_r(rest, ";", &rest)))
 	{
-		printf("%s\n", token);
 		a.push_back(token);
 	}
 

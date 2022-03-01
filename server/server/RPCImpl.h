@@ -54,6 +54,8 @@ private:
 
 	bool ProcessMealRPC(std::vector<std::string>& arrayTokens);
 
+	bool ProcessAddMealRPC(std::vector<std::string>& arrayTokens);
+
     bool ProcessStatusRPC();
 
 	/** Disconnects server socket from the lcient socket, and sends client
