@@ -30,6 +30,8 @@ RPCImpl::RPCImpl(int socket)
 {
 	m_socket = socket;
 	m_rpcCount = 0;
+	mg = new MealGenerator();
+	vault = new Auth();
 };
 
 
@@ -196,6 +198,7 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	string passwordString = arrayTokens[PASSWORDTOKEN];
 	char szBuffer[80];
 
+#if 0
 	// TODO NT CALL AUTH CLASS HERE 
 	// Our Authentication Logic. Looks like Mike/Mike is only valid combination
 	if ((userNameString == "MIKE") && (passwordString == "MIKE"))
@@ -206,12 +209,31 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	{
 		strcpy(szBuffer, "0;"); // Not Connected
 	}
-
-	// Send Response back on our socket
+#endif
+	strcpy(szBuffer, "1;");
+	// send Response back on our socket
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 
+	return true;
+}
+
+bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
+{
+	const int USERNAMETOKEN = 1;
+	const int PASSWORDTOKEN = 2;
+
+	// Strip out tokens 1 and 2 (username, password)
+	string userNameString = arrayTokens[USERNAMETOKEN];
+	string passwordString = arrayTokens[PASSWORDTOKEN];
+	char szBuffer[80];
+
+	strcpy(szBuffer, "1;");
+	// send Response back on our socket
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 	return true;
 }
 
@@ -236,29 +258,29 @@ bool RPCImpl::ProcessDisconnectRPC()
 
 // old code come back to this
 
-//* Returns a buffer containing the information
-//* for the meal that meets the client's submitted
-//* criteria. 
-//*/
-//bool RPCServer::ProcessMealRPC(std::vector<std::string>& arrayTokens)
-//{
-//    const int RPCTOKEN = 0;
-//    const int INFOTOKEN = 1;
-//
-//    // Strip out tokens 1 and 2 (username, password)
-//    string RPC = arrayTokens[RPCTOKEN];
-//    string info = arrayTokens[INFOTOKEN];
-//    char szBuffer[80];
-//    if (RPC == "mealRandom")
-//        strcpy(szBuffer, (mg->getRandomMeal()).c_str());
-//    else if (RPC == "mealByTime")
-//        strcpy(szBuffer, (mg->getRandomMealByTime(info)).c_str());
-//    else
-//        strcpy(szBuffer, (mg->getRandomMealByCuisine(info)).c_str());
-//    // Send Response back on our socket
-//    int nlen = strlen(szBuffer);
-//    szBuffer[nlen] = 0;
-//    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-//
-//    return true;
-//}
+/* Returns a buffer containing the information
+/* for the meal that meets the client's submitted
+/* criteria. 
+/*/
+bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
+{
+    const int RPCTOKEN = 0;
+    const int INFOTOKEN = 1;
+
+    // Strip out tokens 1 and 2 (username, password)
+    string RPC = arrayTokens[RPCTOKEN];
+    string info = arrayTokens[INFOTOKEN];
+    char szBuffer[80];
+    if (RPC == "mealRandom")
+        strcpy(szBuffer, (mg->getRandomMeal()).c_str());
+    else if (RPC == "mealByTime")
+        strcpy(szBuffer, (mg->getRandomMealByTime(info)).c_str());
+    else
+        strcpy(szBuffer, (mg->getRandomMealByCuisine(info)).c_str());
+    // Send Response back on our socket
+    int nlen = strlen(szBuffer);
+    szBuffer[nlen] = 0;
+    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+
+    return true;
+}

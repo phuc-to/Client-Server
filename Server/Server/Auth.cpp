@@ -5,7 +5,7 @@
  @version 1.0
  */
 
-#include "auth.h"
+#include "Auth.h"
 #include <unordered_map>
 
 Auth::Auth()

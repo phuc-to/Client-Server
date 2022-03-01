@@ -80,7 +80,7 @@ int main(int argc, char const* argv[])
 
             cout << "Type your option: ";
             cin >> option;
-            if ((option == 1) || (option == 5)) {
+            if ((option == 1) || (option == 2)) {
                 if (option == 1) {
                     msg = "connect;";
                 }

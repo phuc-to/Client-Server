@@ -17,6 +17,9 @@
 #include <vector>
 #include <iterator>
 
+#include "Auth.h"
+#include "MealGenerator.h"
+
 
 class RPCImpl
 {
@@ -37,12 +40,19 @@ public:
 private:
     int m_rpcCount;
     int m_socket;
+	MealGenerator* mg;
+	Auth* vault;
+	
 
 
     // First one in this function should be a connect, and it 
     // will continue try to process RPC's until a Disconnect happens
 
     bool ProcessConnectRPC(std::vector<std::string>& arrayTokens);
+
+	bool ProcessSignupRPC(std::vector<std::string>& arrayTokens);
+
+	bool ProcessMealRPC(std::vector<std::string>& arrayTokens);
 
     bool ProcessStatusRPC();
 
