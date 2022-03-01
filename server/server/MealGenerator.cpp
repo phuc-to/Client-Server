@@ -168,7 +168,7 @@ string MealGenerator::getRandomMealByCuisine(string cuisine) {
     }
     int options = mealsByCuisine.size();
     if (options == 0) {
-        return "There is no meal in the list with the cuisine type" + cuisine;
+        return "";
     }
     else {
         int i = randomize(options); return mealsByCuisine.at(i).getName();
@@ -184,7 +184,7 @@ string MealGenerator::getRandomMealByTime(string time) {
     }
     int options = mealsByTime.size();
     if (options == 0) {
-        return "There is no meal in the list with the cuisine type" + time;
+        return "";
     }
     else {
         int i = randomize(options); return mealsByTime.at(i).getName();
