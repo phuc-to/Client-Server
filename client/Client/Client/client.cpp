@@ -45,13 +45,12 @@ int main(int argc, char const* argv[])
 {
     
     int cliSocket = 0;                            // init client socket
-    // struct sockaddr_in serv_addr; // defined later in connectToServer
 
     const char* logoffRPC = "disconnect;";
 
     char buffer[BUFF_SIZE] = { 0 };              // init buffer
     const char* serverAddress = argv[1];         // holds server IP address
-    //const int PORT = atoi(argv[2]);              // holds port
+    //const int PORT = atoi(argv[2]);           // holds port
 
 	// hard coded port for testing
 	const int PORT = 10327;                      
@@ -301,11 +300,11 @@ bool connectToServer(const char* serverAddress, int port, int& sock)
 
 	// TODO: PT SEG FAULT AT INET_PTON
 	 //Convert IPv4 and IPv6 addresses from text to binary form
-	if (inet_pton(NAMESPACE, serverAddress, &serv_addr.sin_addr) <= 0)
-	{
-		printf("\nClient: Invalid address/Address not supported \n");
-		return false;
-	}
+	//if (inet_pton(NAMESPACE, serverAddress, &serv_addr.sin_addr) <= 0)
+	//{
+	//	printf("\nClient: Invalid address/Address not supported \n");
+	//	return false;
+	//}
 
 	if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
 	{

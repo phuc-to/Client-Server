@@ -128,7 +128,7 @@ bool RPCServer::ListenForClient()
 	vector<pthread_t> thread_ids;
 	pthread_t thread_id;
 
-	for (;;) // Endless loop. Probably good to have some type of controlled shutdown
+	for (;;) //TODO Endless loop. Probably good to have some type of controlled shutdown
 	{
 		if ((m_socket = accept(m_server_fd, (struct sockaddr*)&m_address,
 			(socklen_t*)&addrlen)) < 0)
@@ -147,8 +147,6 @@ bool RPCServer::ListenForClient()
 		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
 		RPCImpl newRPC = RPCImpl(socket);
 		newRPC.ProcessRPC();
-
-
 	}
 	return true;
 }

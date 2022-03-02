@@ -22,14 +22,14 @@ bool Auth::UserLookup(const string username, const string password)
 	string key = username + password;
 	bool isAdmin = false; 
 
-	// Check if user already exists.
+	// Check if user already exists. If not create new account. 
 	if (this->userLookupMap.find(key) == userLookupMap.end()) {
 		cout << "New user, creating an account...\n";
 		this->userLookupMap.insert({key, true});
 		AssignAdmin(key);
 		cout << "New user created. Logged in successfully\n";
 	}
-	else {
+	else if (this->userLookupMap.find(key) != userLookupMap.end()) {
 		this->userLookupMap[key] = true;
 		cout << "Logged in successfully\n";
 	}

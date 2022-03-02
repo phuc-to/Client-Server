@@ -15,7 +15,9 @@ int main(int argc, char const* argv[])
 {
 	// New server object init. 
 	const char* serverIP = argv[1]; // Holds server's IP address. 
-	int port = atoi(argv[2]);       // Holds port number. 
+	// int port = atoi(argv[2]);       // holds port number. 
+	const int port = 10327;
+
 	bool statusOk = true;           // Holds server status, true when server is running. 
 	RPCServer* serverObj = new RPCServer(serverIP, port);
 
