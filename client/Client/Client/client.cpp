@@ -40,6 +40,7 @@ void optionList();
 void mealOptions();
 void parseTokens(char * buffer, std::vector<std::string>& a);
 bool connectToServer(const char * serverAddress, int port, int & sock);
+string getUsernamePassword(); 
 
 int main(int argc, char const* argv[])
 {
@@ -52,54 +53,68 @@ int main(int argc, char const* argv[])
     const char* serverAddress = argv[1];         // holds server IP address
     //const int PORT = atoi(argv[2]);           // holds port
 
-	// hard coded port for testing
+	// Hard coded port for testing
 	const int PORT = 10327;                      
 
 	// Attempt to connect to server
     bool bConnect = connectToServer(serverAddress, PORT, cliSocket);
 
+	// Continue if socket successful connected to server. 
     if (bConnect == true)
     {
         
-        int valsend;
-        int valread;
-        vector<string> arrayTokens;
-        const int STATUSTOKEN = 0;
-        const int INFOTOKEN = 1;
+        int valsend;                    // Bytes sent.
+        int valread;                    // Bytes rec'd. 
+        vector<string> arrayTokens;     // Holds tokens from input string. 
+        const int STATUSTOKEN = 0;      // Index of RPC status ("connect", "disconnect", etc).
+        const int INFOTOKEN = 1;        // Index of related info from user. 
         
-        //Main program
-        string msg;
+        string msg;                     // Message to be sent to server in buffer. 
+
+		// Display program welcome message and initial options to select from. 
         welcome();
         optionList();
 
-        //Validate account
-
-        bool valid = false;
-        while (!valid) {
-            int option;
+        // Begin user login validation. 
+        bool isValidUser = false;
+        while (!isValidUser) {
+            int userSelection;
             string username;
             string password;
+			string admin;
 
-            cout << "Type your option: ";
-            cin >> option;
-            if ((option == 1) || (option == 2)) {
-                if (option == 1) {
+
+			// Prompt user to (1) Login, (2) Signup, (3) Exit. 
+            cout << "Enter an option from the list below: ";
+            cin >> userSelection;
+
+			// Handle (1) Login and (2) Signup. 
+            if ((userSelection == 1) || (userSelection == 2)) {
+                if (userSelection == 1) {
                     msg = "connect;";
+					msg += getUsernamePassword();
                 }
-                else msg = "signup;";
-                cout << "Please provide your username: ";
-                cin >> username;
-                cout << "Please provide your password: ";
-                cin >> password;
-                cout << endl;
-                msg += username + ';' + password;
+				else {
+					msg = "signup;";
+					msg += getUsernamePassword();
 
-                const char* curMsg = msg.c_str();
-                strcpy(buffer, curMsg);
-                valsend = send(cliSocket, buffer, strlen(buffer), 0);                
-                cout << "Connect message sent" << endl;
+					// Assign admin priveledges to account. 
+					cout << "Would you like Admin priveledges on your account (Y or N)?\n";
+					cin >> admin;
+					if (admin == "Y" || "y")
+						msg += "Y";
+					else
+						msg += "N";
+				};
 
-                valread = read(cliSocket, buffer, BUFF_SIZE);                
+				// Convert msg into char pointer and copy to buffer. 
+                const char* curMsg = msg.c_str();   
+                strcpy(buffer, curMsg);            
+
+				// Send socket to server.
+				// Buffer example "connect;narissa;mypass", "signup;phuc;mypass". 
+                valsend = send(cliSocket, buffer, strlen(buffer), 0);    
+                valread = read(cliSocket, buffer, BUFF_SIZE);          
 
                 sleep(2);
 
@@ -107,34 +122,37 @@ int main(int argc, char const* argv[])
                 parseTokens(buffer, arrayTokens);
                 string error_code = arrayTokens[STATUSTOKEN];
 
+				// Server returned successful error code upon login. 
                 if (error_code == "successful")
                 {
-                    valid = true;
-                    cout << "You successfully logged in" << endl;
+                    isValidUser = true;
+                    cout << "Log in Successful." << endl;
                 }
+				// Server returned failed error code upon login.
                 else {
-                    if (option == 1) cout << "Invalid username/password. Try again!" << endl;
+                    if (userSelection == 1) cout << "Invalid username/password. Try again!" << endl;
                     else cout << "Account already exists. Try login, or use another identity!" << endl;
                     optionList();
                 }
                 cout << endl;
             }
-            else if (option == 3)
+			// (3) User has selected to exit. Exit gracefully. 
+            else if (userSelection == 3)
             {
-                valid = true;
+                isValidUser = true;
                 cout << "Goodbye!";
             }
+			// User entered invalid selection, calls optionList again. 
             else
             {
                 cout << "Invalid option. Let's try again!" << endl;
                 optionList();
-
             }
                 
         }
 
-        valid = false;
-        while (!valid) {
+        isValidUser = false;
+        while (!isValidUser) {
             int meal;
             string info;
 
@@ -143,7 +161,7 @@ int main(int argc, char const* argv[])
             cin >> meal;
             switch (meal) {
             case 0:
-                valid = !valid;
+                isValidUser = !isValidUser;
                 msg = "disconnect;";
                 break;
             case 1:
@@ -174,7 +192,7 @@ int main(int argc, char const* argv[])
                 msg += info + ";";
                 break;
             default:
-                valid = !valid;
+                isValidUser = !isValidUser;
                 cout << "Invalid option. Let's start again!" << endl;
                 meal = 5;
             }
@@ -213,7 +231,7 @@ int main(int argc, char const* argv[])
                             cin >> meal;
                             if (meal == 2)
                             {
-                                valid = !valid;
+                                isValidUser = !isValidUser;
 
                                 strcpy(buffer, logoffRPC);
                                 valsend = send(cliSocket, buffer, strlen(buffer), 0);
@@ -243,6 +261,8 @@ int main(int argc, char const* argv[])
 
     // Terminate connection
     close(cliSocket);
+
+	// TODO: Disconnect Server inside RPC Server. 
 
     return 0;
 }
@@ -313,4 +333,15 @@ bool connectToServer(const char* serverAddress, int port, int& sock)
 	}
 
 	return true;
+}
+
+string getUsernamePassword() {
+	string input, username, password;
+	cout << "Please provide your username: ";
+	cin >> username;
+	cout << "Please provide your password: ";
+	cin >> password;
+	cout << endl;
+	input += username + ';' + password;
+	return input; 
 }

@@ -17,42 +17,53 @@ Auth::~Auth()
 {
 }
 
-bool Auth::UserLookup(const string username, const string password)
+bool Auth::SignUp(const string &username, const string &password, const string &admin)
 {
-	string key = username + password;
-	bool isAdmin = false; 
 
-	// Check if user already exists. If not create new account. 
-	if (this->userLookupMap.find(key) == userLookupMap.end()) {
-		cout << "New user, creating an account...\n";
-		this->userLookupMap.insert({key, true});
-		AssignAdmin(key);
-		cout << "New user created. Logged in successfully\n";
+	// New user, create new account and assign admin priveledges. 
+	if (this->userLookupMap.find(username) == userLookupMap.end()) {
+		this->userLookupMap.insert({ username, true });  // Add new user.
 	}
-	else if (this->userLookupMap.find(key) != userLookupMap.end()) {
-		this->userLookupMap[key] = true;
-		cout << "Logged in successfully\n";
+	// User already exists. Pass to Process Connect. 
+	else if (this->userLookupMap.find(username) != userLookupMap.end()) {
+		return false; 
 	}
+
+	// Check for admin priveledges and assign. 
+	if (admin == "Y")
+		this->AssignAdmin(username);
 	return true;
 }
 
-bool Auth::AssignAdmin(const string key)
+bool Auth::AssignAdmin(const string & username)
 {
-	bool isAdmin = false; 
+	if (this->userLookupMap.find(username) != userLookupMap.end()) {
+		return false;
+		// Store new user with admin status in map. 
+		if (this->adminLookupMap.find(username) == adminLookupMap.end()) {
+			this->adminLookupMap.insert({ username, true });
+		}
 
-	// Prompt new user if they would like admin status. 
-	cout << "Would you like to give this account admin access?: ";
-	cin >> isAdmin;
-
-	// Store new user with admin status in map. 
-	if (this->adminLookupMap.find(key) == adminLookupMap.end()) {
-		this->adminLookupMap.insert({ key, true });
+		return true;
 	}
+}
+
+bool Auth::Login(const string & username, const string & password)
+{
+	string storedPassword; 
+
+	// Check that user already exists. If not, return false. 
+	// User doesn't exist
+	if (this->userLookupMap.find(username) == userLookupMap.end())
+		return false;
+	// User exists
 	else {
-		cout << "This is an admin account. ";
+		// Check passwords match. 
+		storedPassword = userLookupMap[username]; 
+		if (storedPassword != password)
+			return false; 
 	}
+
 	return true;
 }
-
-
-
+;

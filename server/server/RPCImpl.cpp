@@ -36,7 +36,7 @@ RPCImpl::RPCImpl(int socket)
 	m_socket = socket;
 	m_rpcCount = 0;
 	mg = new MealGenerator();
-	vault = new Auth();
+	authObj = new Auth();
 };
 
 
@@ -90,6 +90,14 @@ bool RPCImpl::ProcessRPC()
 			printf("token = %s\n", t);
 		}
 #endif
+		// Signup protocol - call ProcessSignupRPC, followed by ProcessConnectRPC. 
+		if ((bConnected == false) && (aString == "signup")) {
+			bStatusOk = ProcessSignupRPC(arrayTokens);
+			
+			aString = "connect";
+		}
+
+
 		// Login protocol - call ProcessConnectRPC when not connected and RPCToken is "connect". 
 		if ((bConnected == false) && (aString == "connect"))
 		{
@@ -135,6 +143,34 @@ bool RPCImpl::ProcessRPC()
 	return true;
 }
 
+
+bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
+{
+	const int USERNAMETOKEN = 1;
+	const int PASSWORDTOKEN = 2;
+	const int ADMINTOKEN = 3;
+
+	// Strip out tokens. 
+	string userNameString = arrayTokens[USERNAMETOKEN];
+	string passwordString = arrayTokens[PASSWORDTOKEN];
+	string adminString = arrayTokens[ADMINTOKEN];
+	char szBuffer[80];
+
+	// Call Auth's SignUp function. 
+	// If account already exists, send failure error code back. 
+	if (authObj->SignUp(userNameString, passwordString, adminString)) 
+		strcpy(szBuffer, "successful;");
+	else
+		strcpy(szBuffer, "failure;");
+
+	// Send response back.
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	return true;
+}
+
+
 bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 {
 	// TODO: Integrate with client. NT. 
@@ -169,24 +205,6 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 
-	return true;
-}
-
-bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
-{
-	const int USERNAMETOKEN = 1;
-	const int PASSWORDTOKEN = 2;
-
-	// Strip out tokens 1 and 2 (username, password)
-	string userNameString = arrayTokens[USERNAMETOKEN];
-	string passwordString = arrayTokens[PASSWORDTOKEN];
-	char szBuffer[80];
-
-	strcpy(szBuffer, "successful;");
-	// send Response back on our socket
-	int nlen = strlen(szBuffer);
-	szBuffer[nlen] = 0;
-	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 	return true;
 }
 

@@ -41,7 +41,7 @@ private:
     int m_rpcCount;
     int m_socket;
 	MealGenerator* mg;
-	Auth* vault;
+	Auth* authObj;
 	
 
 
