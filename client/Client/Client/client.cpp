@@ -243,8 +243,8 @@ int main(int argc, char const* argv[])
                         }
                         else
                         {
-                            string error = arrayTokens[INFOTOKEN];
-                            cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
+                            //string error = arrayTokens[INFOTOKEN];
+                            //cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
                             cout << "Please try again" << endl << endl;
                         }
                     }

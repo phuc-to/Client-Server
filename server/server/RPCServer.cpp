@@ -23,25 +23,23 @@ using namespace std;
 
 
 
-// TEST THREAD FUNCTION A normal C function that is executed as a thread 
-// when its name is specified in pthread_create()
 void* myThreadFun(void* vargp)
 {
 
 	sleep(1);
 
 	int socket = *(int *)vargp;
-	printf("Printing GeeksQuiz from Thread \n");
-	RPCImpl *rpcImplObj = new RPCImpl(socket);
-	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
-	printf("Done with Thread");
-	return NULL;
+	printf("RPCServer>myThreadFun: Calling ProcessRPC on socket\n");
 
+	// Seed new RPCIml object with socket. 
+	RPCImpl *rpcImplObj = new RPCImpl(socket);
+	// ProcessRPC on the socket. 
+	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
+	printf("RPCServer>myThreadFun: Done with Thread");
+	return NULL;
 }
 
-/**
-Creates new instance of the RPCServer.
-*/
+
 RPCServer::RPCServer(const char* serverIP, int port)
 {
     m_rpcCount = 0;
@@ -50,14 +48,10 @@ RPCServer::RPCServer(const char* serverIP, int port)
     mg = new MealGenerator();  // init new MG object
 };
 
-/**
-Destructor for instance of RPCServer. 
-*/
+
 RPCServer::~RPCServer() {};
 
-/*
-Creates a server on a port that was passed in and creates a server side socket.
-*/
+
 bool RPCServer::StartServer()
 {
 
@@ -72,22 +66,21 @@ bool RPCServer::StartServer()
 	const int LEVEL = SOL_SOCKET;
 	const int OPTNAMES = SO_REUSEADDR | SO_REUSEPORT;  // Socket level options to reuse address and port
 
-
 	// Create socket file descriptor, exit on error or display success msg
 	if ((m_server_fd = socket(NAMESPACE, STYLE, PROTOCOL)) == 0)
     {
-		perror("\nServer: Socket creation error\n");
+		perror("RPCServer>StartServer: Socket creation error\n");
 		exit(EXIT_FAILURE);
     }
 	else
-		cout << "\nserver: socket creation successful\n";
+		cout << "RPCServer>StartServer: Socket creation successful\n";
 
 
 	// TODO: NT Adjust the options when we switch to multithreading
     // forcefully attaching socket to the port
     if (setsockopt(m_server_fd, LEVEL, OPTNAMES, &OPTVAL, sizeof(OPTVAL)))
     {
-		perror("\nServer: Error setting up socket options\n");
+		perror("RPCServer>StartServer: Error setting up socket options\n");
 		exit(EXIT_FAILURE);
     }
 
@@ -100,28 +93,25 @@ bool RPCServer::StartServer()
     // Bind socket to port
     if (bind(m_server_fd, (struct sockaddr*)&m_address, sizeof(m_address)) < 0)
     {
-		perror("\nServer: Error binding socket to address\n");
+		perror("RPCServer>StartServer: Error binding socket to address\n");
 		exit(EXIT_FAILURE);
     }
 	else
-		cout << "\nserver: socket binding successful\n";
+		cout << "RPCServer>StartServer: Socket binding successful\n";
 
 	// Enable connection requests on server file descriptor, exit on error
     if (listen(m_server_fd, BACKLOG) < 0)
     {
-		perror("\nServer: Error listening\n");
+		perror("RPCServer>StartServe: Error listening\n");
 		exit(EXIT_FAILURE);
     }
 	else
-		cout << "\nserver: server file descriptor listening for connection...\n";
+		cout << "RPCServer>StartServer: Server file descriptor listening for connection...\n";
 
     return true; // server started successfully
 }
 
-/** 
-Server file descriptor accepts new connection requests by listening on it's IP address. 
-Creates new socket to handle RPC.
-*/
+
 bool RPCServer::ListenForClient()
 {
 	int addrlen = sizeof(m_address);
@@ -138,15 +128,13 @@ bool RPCServer::ListenForClient()
 		}
 
 		// Launch Thread to Process RPC
-		//TODO: thread ID into an array. Who know's we might want to join on them later
+		//TODO:Join these thread ids, don't know where though. 
 		thread_ids.push_back(thread_id);
-		printf("Launching Thread\n");
 		int socket = m_socket;
 
-		// Create new thread 
+		// Create new thread with socket.
+		printf("RPCServer>ListenForClient: Launching thread");
 		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
-		RPCImpl newRPC = RPCImpl(socket);
-		newRPC.ProcessRPC();
 	}
 	return true;
 }

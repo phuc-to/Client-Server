@@ -13,6 +13,7 @@
 
 int main(int argc, char const* argv[])
 {
+	cout << "main: Starting in main...\n";
 	// New server object init. 
 	const char* serverIP = argv[1]; // Holds server's IP address. 
 	// int port = atoi(argv[2]);       // holds port number. 
@@ -30,7 +31,6 @@ int main(int argc, char const* argv[])
 	// Print it out
 
 	statusOk = serverObj->StartServer();
-	printf("Endless loop, as server is up always");
 	while (statusOk)
 	{
 		statusOk = serverObj->ListenForClient();

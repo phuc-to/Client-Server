@@ -44,10 +44,13 @@ private:
 	Auth* authObj;
 	
 
-
-    // First one in this function should be a connect, and it 
-    // will continue try to process RPC's until a Disconnect happens
-
+	/**
+	ProcessConnectRPC deconstructs client socket buffer and calls the approprite RPCImpl class function 
+	to process the request. Accepts status tokens in predefined list within function. 
+	@pre RPCImpl object seeded with socket exists. 
+	@post RPCImpl class function will be employed. 
+	@return true, upon completion of process. 
+	*/
     bool ProcessConnectRPC(std::vector<std::string>& arrayTokens);
 
 	bool ProcessSignupRPC(std::vector<std::string>& arrayTokens);

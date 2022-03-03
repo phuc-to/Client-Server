@@ -20,6 +20,10 @@
 
 using namespace std;
 
+// Global error codes. 
+const char* FAILCODE = "failure;"; 
+const char* SUCCESSCODE = "successful;"; 
+
 typedef struct _GlobalContext {
 	int g_rpcCount;
 	int g_mealCount;
@@ -48,11 +52,13 @@ void RPCImpl::ParseTokens(char* buffer, std::vector<std::string>& a)
 	char* token;
 	char* rest = (char*)buffer;
 
+	printf("Parsed tokens: "); 
 	while ((token = strtok_r(rest, ";", &rest)))
 	{
-		printf("%s\n", token);
+		printf("%s ", token);
 		a.push_back(token);
 	}
+	printf("\n");
 
 	return;
 }
@@ -60,8 +66,22 @@ void RPCImpl::ParseTokens(char* buffer, std::vector<std::string>& a)
 
 bool RPCImpl::ProcessRPC()
 {
-	char buffer[1024] = { 0 };
-	std::vector<std::string> arrayTokens;   // Holds tokenized form of buffer
+	// List of valid RPC codes that ProcessRPC will recognize. 
+	const vector<string> RPCList = { "signup", "connect", "disconnect", "status", "meal", "addMeal"};
+	const string SIGNUP = RPCList[0];
+	const string CONNECT = RPCList[1];
+	const string DISCONNECT = RPCList[2];
+	const string STATUS = RPCList[3];
+	const string MEAL = RPCList[4];
+	const string ADDMEAL = RPCList[5];
+	
+	// Holds tokenized form of buffer in the formats: 
+	// Sign up: {"RPC code", "username", "password", "Y" or "N"} 
+	// Login: {"RPC code", "username", "password"} 
+	vector<string> arrayTokens;             
+
+
+	char buffer[1024] = { 0 };              // Size of return buffer. 
 	int valread = 0;
 	bool bConnected = false;                // Server is connected to client
 	bool bStatusOk = true;
@@ -91,15 +111,15 @@ bool RPCImpl::ProcessRPC()
 		}
 #endif
 		// Signup protocol - call ProcessSignupRPC, followed by ProcessConnectRPC. 
-		if ((bConnected == false) && (aString == "signup")) {
+		if ((bConnected == false) && (aString == SIGNUP)) {
 			bStatusOk = ProcessSignupRPC(arrayTokens);
 			
-			aString = "connect";
+			aString = CONNECT;
 		}
 
 
 		// Login protocol - call ProcessConnectRPC when not connected and RPCToken is "connect". 
-		if ((bConnected == false) && (aString == "connect"))
+		if ((bConnected == false) && (aString == CONNECT))
 		{
 			bStatusOk = ProcessConnectRPC(arrayTokens);  // Connect RPC
 			if (bStatusOk == true)
@@ -107,7 +127,7 @@ bool RPCImpl::ProcessRPC()
 		}
 		
 		// Disconnect protocol - call ProcessDisconnectRPC when connected and RPCToken is "disconnect". 
-		else if ((bConnected == true) && (aString == "disconnect"))
+		else if ((bConnected == true) && (aString == DISCONNECT))
 		{
 			bStatusOk = ProcessDisconnectRPC();
 			printf("Server: Disconnected.");
@@ -115,18 +135,18 @@ bool RPCImpl::ProcessRPC()
 		}
 
 		// Status protocol - call ProcessStatusRPC on RPCToken "status". 
-		else if ((bConnected == true) && (aString == "status"))
+		else if ((bConnected == true) && (aString == STATUS))
 			bStatusOk = ProcessStatusRPC();   // Status RPC
 
 		// Get Meal Protocol - call ProcessMealRPC when connected and RPCToken is "mean". 
-		else if ((bConnected == true) && (aString == "meal"))
+		else if ((bConnected == true) && (aString == MEAL))
 		{
 			bStatusOk = ProcessMealRPC(arrayTokens);  // Connect RPC
 			if (bStatusOk == true)
 				bConnected = true;
 		}
 
-		else if ((bConnected == true) && (aString == "addMeal"))
+		else if ((bConnected == true) && (aString == ADDMEAL))
 		{
 			bStatusOk = ProcessAddMealRPC(arrayTokens);  // Connect RPC
 			if (bStatusOk == true)
@@ -150,7 +170,7 @@ bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 	const int PASSWORDTOKEN = 2;
 	const int ADMINTOKEN = 3;
 
-	// Strip out tokens. 
+	// Strip out tokens from arrayTokens. 
 	string userNameString = arrayTokens[USERNAMETOKEN];
 	string passwordString = arrayTokens[PASSWORDTOKEN];
 	string adminString = arrayTokens[ADMINTOKEN];
@@ -159,9 +179,9 @@ bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 	// Call Auth's SignUp function. 
 	// If account already exists, send failure error code back. 
 	if (authObj->SignUp(userNameString, passwordString, adminString)) 
-		strcpy(szBuffer, "successful;");
+		strcpy(szBuffer, SUCCESSCODE); // New account created. 
 	else
-		strcpy(szBuffer, "failure;");
+		strcpy(szBuffer, FAILCODE);  // Account is already signed up. 
 
 	// Send response back.
 	int nlen = strlen(szBuffer);
@@ -173,34 +193,24 @@ bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 
 bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 {
-	// TODO: Integrate with client. NT. 
-
 	// Init new Auth object.
 	Auth authObj = Auth(); 
 
 	const int USERNAMETOKEN = 1;
 	const int PASSWORDTOKEN = 2;
 
-	// Strip out tokens 1 and 2 (username, password)
+	// Strip out tokens 1 and 2 (username, password).
 	string userNameString = arrayTokens[USERNAMETOKEN];
 	string passwordString = arrayTokens[PASSWORDTOKEN];
 	char szBuffer[80];
 
-	// TODO: Remove preprocessor block at end of project
-#if 0
-	// TODO NT CALL AUTH CLASS HERE 
-	// Our Authentication Logic. Looks like Mike/Mike is only valid combination
-	if ((userNameString == "MIKE") && (passwordString == "MIKE"))
-	{
-		strcpy(szBuffer, "1;"); // Connected
-	}
+	// Try to login.
+	if (authObj.Login(userNameString, passwordString))
+		strcpy(szBuffer, SUCCESSCODE); // Login was successful. 
 	else
-	{
-		strcpy(szBuffer, "0;"); // Not Connected
-	}
-#endif
-	strcpy(szBuffer, "successful;");
-	// send Response back on our socket
+		strcpy(szBuffer, FAILCODE);    // Login failed. 
+
+	// Send response back.
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
@@ -248,7 +258,7 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 	{
 		output = mg->getRandomMeal();
 		if (output != "")
-			strcpy(szBuffer, ("successful;" + output).c_str());
+			strcpy(szBuffer, (SUCCESSCODE + output).c_str());
 		else
 			strcpy(szBuffer, "failed;Meal List is empty;");
 	}
@@ -256,7 +266,7 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 	{
 		output = mg->getRandomMealByTime(info);
 		if (output != "")
-			strcpy(szBuffer, ("successful;" + output).c_str());
+			strcpy(szBuffer, (SUCCESSCODE + output).c_str());
 		else
 		{
 			error = "failed;There is no meal in the list for " + info + ";";
@@ -267,7 +277,7 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 	{
 		output = mg->getRandomMealByCuisine(info);
 		if (output != "")
-			strcpy(szBuffer, ("successful;" + output).c_str());
+			strcpy(szBuffer, (SUCCESSCODE + output).c_str());
 		else
 		{
 			error = "failed;There is no meal in the list from " + info + ";";

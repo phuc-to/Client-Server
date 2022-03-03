@@ -24,7 +24,7 @@ bool Auth::SignUp(const string &username, const string &password, const string &
 	if (this->userLookupMap.find(username) == userLookupMap.end()) {
 		this->userLookupMap.insert({ username, true });  // Add new user.
 	}
-	// User already exists. Pass to Process Connect. 
+	// User already exists. 
 	else if (this->userLookupMap.find(username) != userLookupMap.end()) {
 		return false; 
 	}
