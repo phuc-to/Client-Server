@@ -113,10 +113,16 @@ int main(int argc, char const* argv[])
 
 				// Send socket to server.
 				// Buffer example "connect;narissa;mypass", "signup;phuc;mypass". 
-                valsend = send(cliSocket, buffer, strlen(buffer), 0);    
-                valread = read(cliSocket, buffer, BUFF_SIZE);          
+                valsend = send(cliSocket, buffer, strlen(buffer), 0);  
+
+                if (userSelection == 1)                 
+                    cout << "Login message sent" << endl;
+                else
+                    cout << "Signup message sent" << endl;
 
                 sleep(2);
+
+                valread = read(cliSocket, buffer, BUFF_SIZE);          
 
                 arrayTokens.clear();
                 parseTokens(buffer, arrayTokens);
@@ -126,7 +132,7 @@ int main(int argc, char const* argv[])
                 if (error_code == "successful")
                 {
                     isValidUser = true;
-                    cout << "Log in Successful." << endl;
+                    cout << "Logged In successful." << endl;
                 }
 				// Server returned failed error code upon login.
                 else {
