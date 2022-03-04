@@ -23,6 +23,8 @@ using namespace std;
 // Global error codes. 
 const char* FAILCODE = "failure;"; 
 const char* SUCCESSCODE = "successful;"; 
+const string defaultID = "admin";
+const string defaultPassword = "password";
 
 typedef struct _GlobalContext {
 	int g_rpcCount;
@@ -41,6 +43,7 @@ RPCImpl::RPCImpl(int socket)
 	m_rpcCount = 0;
 	mg = new MealGenerator();
 	authObj = new Auth();
+	authObj->signUp(defaultID, defaultPassword, "Y");
 };
 
 
@@ -178,7 +181,7 @@ bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 
 	// Call Auth's SignUp function. 
 	// If account already exists, send failure error code back. 
-	if (authObj->SignUp(userNameString, passwordString, adminString)) 
+	if (authObj->signUp(userNameString, passwordString, adminString)) 
 		strcpy(szBuffer, SUCCESSCODE); // New account created. 
 	else
 		strcpy(szBuffer, FAILCODE);  // Account is already signed up. 
@@ -194,7 +197,7 @@ bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 {
 	// Init new Auth object.
-	Auth authObj = Auth(); 
+	//Auth authObj = Auth(); 
 
 	const int USERNAMETOKEN = 1;
 	const int PASSWORDTOKEN = 2;
@@ -205,7 +208,7 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	char szBuffer[80];
 
 	// Try to login.
-	if (authObj.Login(userNameString, passwordString))
+	if (authObj->login(userNameString, passwordString))
 		strcpy(szBuffer, SUCCESSCODE); // Login was successful. 
 	else
 		strcpy(szBuffer, FAILCODE);    // Login failed. 
@@ -221,6 +224,12 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 
 bool RPCImpl::ProcessStatusRPC()
 {
+	char szBuffer[16];
+	strcpy(szBuffer, "active;");
+	// Send Response back on our socket
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 	return true;
 }
 

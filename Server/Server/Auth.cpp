@@ -17,25 +17,24 @@ Auth::~Auth()
 {
 }
 
-bool Auth::SignUp(const string &username, const string &password, const string &admin)
+bool Auth::signUp(const string &username, const string &password, const string &admin)
 {
 
 	// New user, create new account and assign admin priveledges. 
 	if (this->userLookupMap.find(username) == userLookupMap.end()) {
-		this->userLookupMap.insert({ username, true });  // Add new user.
+		this->userLookupMap.insert({ username, password});  // Add new user.
 	}
 	// User already exists. 
-	else if (this->userLookupMap.find(username) != userLookupMap.end()) {
-		return false; 
-	}
+	else
+		return false;
 
 	// Check for admin priveledges and assign. 
 	if (admin == "Y")
-		this->AssignAdmin(username);
+		this->assignAdmin(username);
 	return true;
 }
 
-bool Auth::AssignAdmin(const string & username)
+bool Auth::assignAdmin(const string & username)
 {
 	if (this->userLookupMap.find(username) != userLookupMap.end()) {
 		return false;
@@ -48,7 +47,7 @@ bool Auth::AssignAdmin(const string & username)
 	}
 }
 
-bool Auth::Login(const string & username, const string & password)
+bool Auth::login(const string & username, const string & password)
 {
 	string storedPassword; 
 
@@ -66,4 +65,10 @@ bool Auth::Login(const string & username, const string & password)
 
 	return true;
 }
-;
+
+bool Auth::userLookup(const string& username, const string& password)
+{
+	if (this->userLookupMap.find(username) == userLookupMap.end())
+		return true;
+	return false;
+}

@@ -9,7 +9,6 @@
 
 #include <string>
 #include <unordered_map>
-#include <iostream>
 
 using namespace std;
 
@@ -23,7 +22,7 @@ public:
 	~Auth();
 
 
-	bool SignUp(const string &username, const string &password, const string &admin);
+	bool signUp(const string &username, const string &password, const string &admin);
 
 	/**
 	AssignAdmin stores admin status of users stored in userLookupMap
@@ -31,14 +30,14 @@ public:
 	@param status, true for admin, false for normal user
 	@param admin, "Y" for admin priveledges
 	*/
-	bool AssignAdmin(const string &username);
+	bool assignAdmin(const string &username);
 
 	/**
 	Login checks that the user already exists in the Auth object, then logs
 	them into the program. 
 	@
 	*/
-	bool Login(const string &username, const string &password);
+	bool login(const string &username, const string &password);
 
 	/**
 	UserLookup checks if there is a user name and password already saved to the map.
@@ -49,14 +48,14 @@ public:
 	@return true for exists
 	@pre user doesn't exist or is not logged in
 	*/
-	bool UserLookup(const string &username, const string &passord);
+	bool userLookup(const string &username, const string &password);
 
 private: 
 	string username;
 	string password;
 
 	// key:usernamepassword; value:true/false for logged in 
-	unordered_map<string, bool> userLookupMap; 
+	unordered_map<string, string> userLookupMap; 
 	// key:username, value:true/false
 	unordered_map<string, bool> adminLookupMap;  
 
