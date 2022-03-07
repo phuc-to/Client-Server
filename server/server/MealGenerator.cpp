@@ -2,8 +2,8 @@
  @file  MealGenerator class implementation file
  @for MealTime socket programming project
  @authors Phuc T, Narissa T, Kristen K
- @date 2/12/22
- @version 1.0
+ @date 3/10/22
+ @version .0
  */
 #include <string>
 #include <iostream>
@@ -156,7 +156,6 @@ MealGenerator::MealGenerator() {
 MealGenerator::~MealGenerator() {};
 
 bool MealGenerator::addMeal(string name, string time, string cuisine) {
-	// TODO Input validation.
 	// Check if name of meal is not in meals already. 
 	for (int i = 0; i < numMeals; i++) {
 		if (name == meals.at(i).getName()) {
