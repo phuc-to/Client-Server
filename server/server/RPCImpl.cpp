@@ -190,7 +190,7 @@ bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-	return true;
+	return true;  // RPC complete. 
 }
 
 
@@ -218,7 +218,7 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 
-	return true;
+	return true;  // RPC complete. 
 }
 
 
@@ -230,7 +230,7 @@ bool RPCImpl::ProcessStatusRPC()
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-	return true;
+	return true;  // RPC complete. 
 }
 
 
@@ -242,7 +242,7 @@ bool RPCImpl::ProcessDisconnectRPC()
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-	return true;
+	return true; // RPC complete. 
 }
 
 
@@ -273,6 +273,8 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 	}
 	else if (RPC == "ByTime")
 	{
+		// TODO: Input validation of times 
+
 		output = mg->getRandomMealByTime(info);
 		if (output != "")
 			strcpy(szBuffer, (SUCCESSCODE + output).c_str());
@@ -284,12 +286,14 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 	}
 	else if (RPC == "ByCuisine")
 	{
+		// TODO: Input validation of cuisines 
+
 		output = mg->getRandomMealByCuisine(info);
 		if (output != "")
 			strcpy(szBuffer, (SUCCESSCODE + output).c_str());
 		else
 		{
-			error = "failed;There is no meal in the list from " + info + ";";
+			error = "failed;No " + info + " meals stored yet;";
 			strcpy(szBuffer, error.c_str());
 		}
 	}
@@ -301,7 +305,7 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
     szBuffer[nlen] = 0;
     send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 
-    return true;
+    return true; // RPC complete. 
 }
 
 bool RPCImpl::ProcessAddMealRPC(std::vector<std::string>& arrayTokens)
@@ -316,10 +320,13 @@ bool RPCImpl::ProcessAddMealRPC(std::vector<std::string>& arrayTokens)
 	string cuisine = arrayTokens[CUISINETOKEN];
 	char szBuffer[80];
 
-	mg->addMeal(name, time, cuisine);  // Add new meal to Meal Generator class 
-	strcpy(szBuffer, "successful");
+	// Attempt to add new meal to Meal Generator class 
+	if(!(mg->addMeal(name, time, cuisine)))  // Meal already exists in MG. 
+		strcpy(szBuffer, FAILCODE);
+	else
+		strcpy(szBuffer,SUCCESSCODE);        // New meal added. 
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-	return true;
+	return true; // RPC complete. 
 }
