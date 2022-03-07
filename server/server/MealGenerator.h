@@ -1,8 +1,8 @@
 /**
- @file  MealGenerator class header file for MealTime socket programming project
+ @file  MealGenerator class header file for socket programming project. Serves as Meal database.
  @authors Phuc T, Narissa T, Kristen K
- @date 2/12/22
- @version 1.0
+ @date 3/10/22
+ @version 2.0
  */
 #pragma once
 #include <vector>
@@ -14,79 +14,78 @@ using namespace std;
 
 class MealGenerator
 {
-
-private:
-	vector<Meal> meals;
-
-	/*
-    Function:   randomize
-	Purpose:    Private function to help the getRandomMeal function
-	            return the name of a random meal.
-	Parameter:  the number of available meal options
-	Returns:    a random number within the number of available 
-	            meal options.
-	*/
-	int randomize(int);
-
-	
-	/*
-	Private static variable used to ensure that we only set 
-    the seed value for the rand() function once.
-	*/
-	static bool isSeeded;
-
 public:
-	 /*
-     Default constructor.
-     Initializes the list of meals to the default options in the
-     Meal Generator.
-     */
+
+		/** Creates and instance of MealGenerator. Initializes the list of meals to the
+		default options in the Meal Generator.*/
 	    MealGenerator();
 
+		/** Destructor for instance of MealGenerator.*/
 		~MealGenerator();
 
-		/*
-		Function:   addMeal
-		Purpose:    adds a meal to the list of meals in the Meal Generator.
-		Parameters: the name of the meal
-				    the time when the meal is eaten (breakfast, lunch, or dinner)
-				    the type of cuisine for the meal
-	    */
-		void addMeal(string, string, string);
+		/**Adds a Meal to the list of meals in the Meal Generator.
 
-		/*
-		Function:   getRandomMeal
-		Purpose:    returns the name of random meal from the list
-		            of meals in Meal Generator.
-		Returns:    the name of the random meal;
+		@param name, the name of the meal.
+		@param time, the time when the meal is eaten (breakfast, lunch, or dinner).
+		@param cuisine, the type of cuisine for the meal
+		@return true, if meal did not already exist in Meal Generator. Else, false. 
+		*/
+		bool addMeal(string, string, string);
+
+		/** Returns the name of random meal from the list of meals in Meal Generator.
+
+		@returns name, the name of the random meal.
 		*/
 		string getRandomMeal();
 
-		/*
-		Function:   getRandomMealByTime
-		Purpose:    returns the name of random meal from the list
-		            of meals in Meal Generator with the time from the input parameter, 
-					or returns a statement saying that there were no meals with the
-	                time from the input parameter.
-					// QUESTION FOR GROUP - is this how we want to handle there
-					// being no meals matching the input cuisine/time?
-		Parameter:  the time when the meal is eaten (breakfast, lunch, or dinner).
-		Returns:    the name of the random meal.
+		/** Returns the name of random meal from the list of meals in Meal Generator with
+		the time from the input parameter, or returns a statement saying that there were
+		no meals with the time from the input parameter.
+
+		@param time, the time when the meal is eaten (breakfast, lunch, or dinner).
+		@return name, name of the random meal.
 		*/
 		string getRandomMealByTime(string);
 
-		/*
-        Function:   getRandomMealByCuisine
-		Purpose:    returns the name of random meal from the list
-		            of meals in Meal Generator with the cuisine type
-					from the input parameter, or returns a statement 
-					saying that there were no meals with the cuisine 
-					type from the input parameter.
-		Parameters: the cuisine type of the meal.
-		Returns:    the name of the random meal.
-        */
+		/** Returns the name of random meal from the list of meals in Meal Generator with
+		the cuisine type from the input parameter, or returns a statement saying that there
+		were no meals with the cuisine type from the input parameter.
+
+		@param cuisine, thecuisine type of the meal.
+		@return name, name of the random meal.
+		*/
 		string getRandomMealByCuisine(string);
 
-		//Print function for testing
-		void print();
+		/** Returns the current TIMES vector. 
+
+		@return TIMES, vector holding time of day selections. 
+		*/
+		vector<string> const getTimesOfDay();
+
+		/** Returns the current CUISINES vector.
+
+		@return CUISINES, vecot holding list of cuisines.
+		*/
+		vector<string> const getCuisines();
+
+
+private:
+	int numMeals;      // Holds size of Meals.  
+
+	vector<Meal> meals; // Holds all Meals stored in the Meal Generator object.
+
+	const vector<string> TIMES = { "breakfast", "lunch", "dinner" }; // Holds Time of Day selections. 
+
+	vector<string> CUISINES;  // Holds list of cuisines to choose from. 
+
+
+	/** Private static variable used to ensure that  the seed value for the sRand
+	object is only set once.
+	*/
+	static bool isSeeded;
+
+	/** getRandomMeal helper function to generate random int and seed sRand object.
+	@return int, random number between 1 and size of the Meal vector.
+	*/
+	int randomize(int);
 };
