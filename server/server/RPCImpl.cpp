@@ -1,5 +1,5 @@
 /**
- @file RPCImpl.cpp
+ @file  RPCImpl.cpp Remote Procedure Call implementation file.
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
  @version 2.0
@@ -34,7 +34,7 @@ typedef struct _GlobalContext {
 	int g_dinnerCount;
 } GlobalContext;
 
-GlobalContext globalObj; // We need to protect this, as we don't want bad data
+GlobalContext globalObj; 
 
 
 RPCImpl::RPCImpl(int socket)
@@ -105,21 +105,13 @@ bool RPCImpl::ProcessRPC()
 		arrayTokens.clear(); // Refresh array token list. 
 		this->ParseTokens(buffer, arrayTokens); // Parse tokens from buffer into arrayTokens. 
 		aString = arrayTokens[RPCTOKEN];
-#if 0
-		// Enumerate through the tokens. The first token is always the specific RPC
-		for (vector<string>::iterator t = arrayTokens.begin(); t != arrayTokens.end(); ++t)
-		{
-			printf("Debugging our tokens\n");
-			printf("token = %s\n", t);
-		}
-#endif
+
 		// Signup protocol - call ProcessSignupRPC, followed by ProcessConnectRPC. 
 		if ((bConnected == false) && (aString == SIGNUP)) {
 			bStatusOk = ProcessSignupRPC(arrayTokens);
 			
 			aString = CONNECT;
 		}
-
 
 		// Login protocol - call ProcessConnectRPC when not connected and RPCToken is "connect". 
 		if ((bConnected == false) && (aString == CONNECT))
