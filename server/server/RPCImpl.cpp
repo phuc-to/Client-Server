@@ -15,7 +15,6 @@
 #include <iterator>
 
 #include "RPCImpl.h"
-#include "LocalContext.h"
 #include "Auth.h"
 
 using namespace std;
