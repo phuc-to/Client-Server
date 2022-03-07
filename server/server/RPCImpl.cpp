@@ -36,7 +36,6 @@ typedef struct _GlobalContext {
 
 GlobalContext globalObj; 
 
-
 RPCImpl::RPCImpl(int socket)
 {
 	m_socket = socket;
@@ -46,26 +45,7 @@ RPCImpl::RPCImpl(int socket)
 	authObj->signUp(defaultID, defaultPassword, "Y");
 };
 
-
 RPCImpl::~RPCImpl() {};
-
-
-void RPCImpl::ParseTokens(char* buffer, std::vector<std::string>& a)
-{
-	char* token;
-	char* rest = (char*)buffer;
-
-	printf("Parsed tokens: "); 
-	while ((token = strtok_r(rest, ";", &rest)))
-	{
-		printf("%s ", token);
-		a.push_back(token);
-	}
-	printf("\n");
-
-	return;
-}
-
 
 bool RPCImpl::ProcessRPC()
 {
@@ -158,34 +138,6 @@ bool RPCImpl::ProcessRPC()
 	return true;
 }
 
-
-bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
-{
-	const int USERNAMETOKEN = 1;
-	const int PASSWORDTOKEN = 2;
-	const int ADMINTOKEN = 3;
-
-	// Strip out tokens from arrayTokens. 
-	string userNameString = arrayTokens[USERNAMETOKEN];
-	string passwordString = arrayTokens[PASSWORDTOKEN];
-	string adminString = arrayTokens[ADMINTOKEN];
-	char szBuffer[80];
-
-	// Call Auth's SignUp function. 
-	// If account already exists, send failure error code back. 
-	if (authObj->signUp(userNameString, passwordString, adminString)) 
-		strcpy(szBuffer, SUCCESSCODE); // New account created. 
-	else
-		strcpy(szBuffer, FAILCODE);  // Account is already signed up. 
-
-	// Send response back.
-	int nlen = strlen(szBuffer);
-	szBuffer[nlen] = 0;
-	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-	return true;  // RPC complete. 
-}
-
-
 bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 {
 	// Init new Auth object.
@@ -213,49 +165,47 @@ bool RPCImpl::ProcessConnectRPC(std::vector<std::string>& arrayTokens)
 	return true;  // RPC complete. 
 }
 
-
-bool RPCImpl::ProcessStatusRPC()
+bool RPCImpl::ProcessSignupRPC(std::vector<std::string>& arrayTokens)
 {
-	char szBuffer[16];
-	strcpy(szBuffer, "active;");
-	// Send Response back on our socket
+	const int USERNAMETOKEN = 1;
+	const int PASSWORDTOKEN = 2;
+	const int ADMINTOKEN = 3;
+
+	// Strip out tokens from arrayTokens. 
+	string userNameString = arrayTokens[USERNAMETOKEN];
+	string passwordString = arrayTokens[PASSWORDTOKEN];
+	string adminString = arrayTokens[ADMINTOKEN];
+	char szBuffer[80];
+
+	// Call Auth's SignUp function. 
+	// If account already exists, send failure error code back. 
+	if (authObj->signUp(userNameString, passwordString, adminString)) 
+		strcpy(szBuffer, SUCCESSCODE); // New account created. 
+	else
+		strcpy(szBuffer, FAILCODE);  // Account is already signed up. 
+
+	// Send response back.
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 	return true;  // RPC complete. 
 }
 
-
-bool RPCImpl::ProcessDisconnectRPC()
-{
-	char szBuffer[16];
-	strcpy(szBuffer, "disconnect;");
-	// Send Response back on our socket
-	int nlen = strlen(szBuffer);
-	szBuffer[nlen] = 0;
-	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
-	return true; // RPC complete. 
-}
-
-
-
-/* Returns a buffer containing the informationfor the meal that meets the client's submitted
-   criteria. */
 bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 {
-    const int RPCTOKEN = 1;
-    const int INFOTOKEN = 2;
+	const int RPCTOKEN = 1;
+	const int INFOTOKEN = 2;
 	string output;                    // Holds output from Meal Generator object class function. 
 	string error;                     // Holds error message to be copied to socket. 
 
-    // Strip out tokens 1 and 2 (username, password).
-    string RPC = arrayTokens[RPCTOKEN];
-    string info = arrayTokens[INFOTOKEN];
-    char szBuffer[80];
+	// Strip out tokens 1 and 2 (username, password).
+	string RPC = arrayTokens[RPCTOKEN];
+	string info = arrayTokens[INFOTOKEN];
+	char szBuffer[80];
 
 	// Gets random meal, meal by time, or meal by cuisine from Meal Generator object mg, copies to buffer. 
 	// If no output, copies error message to buffer. 
-	if (RPC == "Random") 
+	if (RPC == "Random")
 	{
 		output = mg->getRandomMeal();
 		if (output != "")
@@ -292,12 +242,12 @@ bool RPCImpl::ProcessMealRPC(std::vector<std::string>& arrayTokens)
 	else
 		strcpy(szBuffer, "failed;Invalid Argument, or Operation Not Supported;");
 
-    // Send response back on the socket.
-    int nlen = strlen(szBuffer);
-    szBuffer[nlen] = 0;
-    send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	// Send response back on the socket.
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 
-    return true; // RPC complete. 
+	return true; // RPC complete. 
 }
 
 bool RPCImpl::ProcessAddMealRPC(std::vector<std::string>& arrayTokens)
@@ -321,4 +271,42 @@ bool RPCImpl::ProcessAddMealRPC(std::vector<std::string>& arrayTokens)
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 	return true; // RPC complete. 
+}
+
+bool RPCImpl::ProcessStatusRPC()
+{
+	char szBuffer[16];
+	strcpy(szBuffer, "active;");
+	// Send Response back on our socket
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	return true;  // RPC complete. 
+}
+
+bool RPCImpl::ProcessDisconnectRPC()
+{
+	char szBuffer[16];
+	strcpy(szBuffer, "disconnect;");
+	// Send Response back on our socket
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	return true; // RPC complete. 
+}
+
+void RPCImpl::ParseTokens(char* buffer, std::vector<std::string>& a)
+{
+	char* token;
+	char* rest = (char*)buffer;
+
+	printf("Parsed tokens: ");
+	while ((token = strtok_r(rest, ";", &rest)))
+	{
+		printf("%s ", token);
+		a.push_back(token);
+	}
+	printf("\n");
+
+	return;
 }
