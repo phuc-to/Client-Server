@@ -32,13 +32,16 @@ const int STYLE = SOCK_STREAM;        // comm style for TCP programming
 const int PROTOCOL = 0;               // 0 for internet 
 const int BUFF_SIZE = 1024;           // default buffer size
 
-const char deli = ';';
+const char* deli = ";";
 
-// TODO: PT - Function prototype documenation, follow style in server.h for consistency. 
+// TODO: PT - Function prototype documenation, follow style in server.h for consistency.
+bool loginValidation(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg);
+bool mealProcessing(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg);
 void welcome();
 void optionList();
 void mealOptions();
 void parseTokens(char * buffer, std::vector<std::string>& a);
+string toLowerCase(string s);
 bool connectToServer(const char * serverAddress, int port, int & sock);
 string getUsernamePassword(); 
 
@@ -75,194 +78,13 @@ int main(int argc, char const* argv[])
         welcome();
         optionList();
 
-        // Begin user login validation. 
-        bool isValidUser = false;
-        while (!isValidUser) {
-            int userSelection;
-            string username;
-            string password;
-			string admin;
-
-
-			// Prompt user to (1) Login, (2) Signup, (3) Exit. 
-            cout << "Enter an option from the list below: ";
-            cin >> userSelection;
-
-			// Handle (1) Login and (2) Signup. 
-            if ((userSelection == 1) || (userSelection == 2)) {
-                if (userSelection == 1) {
-                    msg = "connect;";
-					msg += getUsernamePassword();
-                }
-				else {
-					msg = "signup;";
-					msg += getUsernamePassword();
-
-					// Assign admin priveledges to account. 
-					cout << "Would you like Admin priveledges on your account (Y or N)?\n";
-					cin >> admin;
-					if (admin == "Y" || "y")
-						msg += "Y";
-					else
-						msg += "N";
-				};
-
-				// Convert msg into char pointer and copy to buffer. 
-                const char* curMsg = msg.c_str();   
-                strcpy(buffer, curMsg);            
-
-				// Send socket to server.
-				// Buffer example "connect;narissa;mypass", "signup;phuc;mypass". 
-                valsend = send(cliSocket, buffer, strlen(buffer), 0);  
-
-                if (userSelection == 1)                 
-                    cout << "Login message sent" << endl;
-                else
-                    cout << "Signup message sent" << endl;
-
-                sleep(2);
-
-                valread = read(cliSocket, buffer, BUFF_SIZE);          
-
-                arrayTokens.clear();
-                parseTokens(buffer, arrayTokens);
-                string error_code = arrayTokens[STATUSTOKEN];
-
-				// Server returned successful error code upon login. 
-                if (error_code == "successful")
-                {
-                    isValidUser = true;
-                    cout << "Logged In successful." << endl;
-                }
-				// Server returned failed error code upon login.
-                else {
-                    if (userSelection == 1) cout << "Invalid username/password. Try again!" << endl;
-                    else cout << "Account already exists. Try login, or use another identity!" << endl;
-                    optionList();
-                }
-                cout << endl;
-            }
-			// (3) User has selected to exit. Exit gracefully. 
-            else if (userSelection == 3)
-            {
-                isValidUser = true;
-                cout << "Goodbye!";
-            }
-			// User entered invalid selection, calls optionList again. 
-            else
-            {
-                cout << "Invalid option. Let's try again!" << endl;
-                optionList();
-            }
-                
-        }
-
-        isValidUser = false;
-        while (!isValidUser) {
-            int meal;
-            string info;
-
-            mealOptions();
-            cout << "Type in your option: ";
-            cin >> meal;
-            switch (meal) {
-            case 0:
-                isValidUser = !isValidUser;
-                msg = "disconnect;";
-                break;
-            case 1:
-                msg = "meal;Random;";
-                break;
-            case 2:
-                msg = "meal;ByTime;";
-                cout << "What time of day are you looking at? ";
-                cin >> info;
-                msg += info + ";";
-                break;
-            case 3:
-                msg = "meal;ByCuisine;";
-                cout << "What cuisine do you want? ";
-                cin >> info;
-                msg += info + ";";
-                break;
-            case 4:
-                msg = "addMeal;";
-                cout << "What is the name of the meal? ";
-                cin >> info;
-                msg += info + ";";
-                cout << "What is the time of the day for " + info;
-                cin >> info;
-                msg += info + ";";
-                cout << "Where does it originate from? ";
-                cin >> info;
-                msg += info + ";";
-                break;
-            default:
-                isValidUser = !isValidUser;
-                cout << "Invalid option. Let's start again!" << endl;
-                meal = 5;
-            }
-            if ((meal <= 4) && (meal >= 0))
-            {
-                cout << endl;
-                const char* curMsg = msg.c_str();
-                strcpy(buffer, curMsg);
-                valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                if (meal == 4)
-                    cout << "Disconnect message sent" << endl;
-                else
-                    cout << "Your meal request has been sent" << endl;
-
-                sleep(2);
-
-                valread = read(cliSocket, buffer, BUFF_SIZE);
-                arrayTokens.clear();
-                parseTokens(buffer, arrayTokens);
-                string error_code = arrayTokens[STATUSTOKEN];
-
-                if (meal == 0)
-                {
-                    cout << "You are disconnected" << endl;
-                }
-                else
-                {
-                    if (meal != 4)
-                    {
-                        if (error_code == "successful")
-                        {
-                            string mealSuggestion = arrayTokens[INFOTOKEN];
-                            cout << "The meal for you would be " << mealSuggestion << endl << endl;
-
-                            cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
-                            cin >> meal;
-                            if (meal == 2)
-                            {
-                                isValidUser = !isValidUser;
-
-                                strcpy(buffer, logoffRPC);
-                                valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                                printf("Disconnect message sent");
-                                sleep(2);
-                                valread = read(cliSocket, buffer, BUFF_SIZE);
-                                cout << "You are disconnected" << endl;
-                            }
-                        }
-                        else
-                        {
-                            //string error = arrayTokens[INFOTOKEN];
-                            //cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
-                            cout << "Please try again" << endl << endl;
-                        }
-                    }
-                    else
-                        cout << "You succesfully added a meal" << endl << endl;
-                }
-            }
-        }
+        // Begin user login validation and meal processing. 
+        if (loginValidation(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg))
+            mealProcessing(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg);               
     }
     else
     {
-        printf("Exit without calling RPC");
+        printf("Connection failed");
     }
 
     // Terminate connection
@@ -273,6 +95,202 @@ int main(int argc, char const* argv[])
     return 0;
 }
 
+bool loginValidation(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg)
+{
+    bool isValidUser = false;
+    while (!isValidUser) {
+        int userSelection;
+        string username;
+        string password;
+        string admin;
+
+
+        // Prompt user to (1) Login, (2) Signup, (3) Exit. 
+        cout << "Enter your option: ";
+        cin >> userSelection;
+
+        // Handle (1) Login and (2) Signup. 
+        if ((userSelection == 1) || (userSelection == 2)) {
+            if (userSelection == 1) {
+                msg = "connect;";
+                msg += getUsernamePassword();
+            }
+            else {
+                msg = "signup;";
+                msg += getUsernamePassword();
+
+                // Assign admin priveledges to account. 
+                cout << "Would you like Admin priveledges on your account (Y or N)?\n";
+                cin >> admin;
+                if (admin == "Y" || "y")
+                    msg += "Y";
+                else
+                    msg += "N";
+            };
+
+            // Convert msg into char pointer and copy to buffer. 
+            const char* curMsg = msg.c_str();
+            strcpy(buffer, curMsg);
+
+            // Send socket to server.
+            // Buffer example "connect;narissa;mypass", "signup;phuc;mypass". 
+            valsend = send(cliSocket, buffer, strlen(buffer), 0);
+
+            if (userSelection == 1)
+                cout << "Login message sent" << endl << endl;
+            else
+                cout << "Signup message sent" << endl << endl;
+
+            sleep(2);
+
+            valread = read(cliSocket, buffer, BUFF_SIZE);
+
+            arrayTokens.clear();
+            parseTokens(buffer, arrayTokens);
+            string error_code = arrayTokens[STATUSTOKEN];
+
+            // Server returned successful error code upon login. 
+            if (error_code == "successful")
+            {
+                isValidUser = true;
+                cout << "Logged In successful." << endl;
+            }
+            // Server returned failed error code upon login.
+            else {
+                if (userSelection == 1) cout << "Invalid username/password. Try again!" << endl;
+                else cout << "Account already exists. Try login, or use another identity!" << endl;
+                optionList();
+            }
+            cout << endl;
+        }
+        // (3) User has selected to exit. Exit gracefully. 
+        else if (userSelection == 3)
+        {
+            isValidUser = true;
+            cout << "Goodbye!";
+            return false;
+        }
+        // User entered invalid selection, calls optionList again. 
+        else
+        {
+            cout << "Invalid option. Let's try again!" << endl;
+            optionList();
+        }
+
+    }
+    return true;
+}
+
+bool mealProcessing(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg)
+{
+    const char* logoffRPC = "disconnect;";
+
+    bool isValidUser = false;
+    while (!isValidUser) {
+        int meal;
+        string info;
+
+        mealOptions();
+        cout << "Type in your option: ";
+        cin >> meal;
+        switch (meal) {
+        case 0:
+            isValidUser = !isValidUser;
+            msg = "disconnect;";
+            break;
+        case 1:
+            msg = "meal;Random;";
+            break;
+        case 2:
+            msg = "meal;ByTime;";
+            cout << "What time of day are you looking at? ";
+            cin >> info;
+            msg += toLowerCase(info) + ";";
+            break;
+        case 3:
+            msg = "meal;ByCuisine;";
+            cout << "What cuisine do you want? ";
+            cin >> info;
+            msg += toLowerCase(info) + ";";
+            break;
+        case 4:
+            msg = "addMeal;";
+            cout << "What is the name of the meal? ";
+            cin >> info;
+            msg += info + ";";
+            cout << "What is the time of the day for " + info;
+            cin >> info;
+            msg += toLowerCase(info) + ";";
+            cout << "Where does it originate from? ";
+            cin >> info;
+            msg += toLowerCase(info) + ";";
+            break;
+        default:
+            isValidUser = !isValidUser;
+            cout << "Invalid option. Let's start again!" << endl;
+            meal = 5;
+        }
+        if ((meal <= 4) && (meal >= 0))
+        {
+            cout << endl;
+            const char* curMsg = msg.c_str();
+            strcpy(buffer, curMsg);
+            valsend = send(cliSocket, buffer, strlen(buffer), 0);
+            if (meal == 4)
+                cout << "Disconnect message sent" << endl << endl;
+            else
+                cout << "Your meal request has been sent" << endl << endl;
+
+            sleep(2);
+
+            valread = read(cliSocket, buffer, BUFF_SIZE);
+
+            arrayTokens.clear();
+            parseTokens(buffer, arrayTokens);
+            string error_code = arrayTokens[STATUSTOKEN];
+
+            if (meal == 0)
+            {
+                cout << "You are disconnected" << endl;
+            }
+            else
+            {
+                if (meal != 4)
+                {
+                    if (error_code == "successful")
+                    {
+                        string mealSuggestion = arrayTokens[INFOTOKEN];
+                        cout << "The meal for you would be " << mealSuggestion << endl << endl;
+
+                        cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
+                        cin >> meal;
+                        if (meal == 2)
+                        {
+                            isValidUser = !isValidUser;
+
+                            strcpy(buffer, logoffRPC);
+                            valsend = send(cliSocket, buffer, strlen(buffer), 0);
+                            cout << "Disconnect message sent" << endl << endl;
+
+                            sleep(2);
+
+                            valread = read(cliSocket, buffer, BUFF_SIZE);
+                            cout << "You are disconnected" << endl;
+                        }
+                    }
+                    else
+                    {
+                        //string error = arrayTokens[INFOTOKEN];
+                        //cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
+                        cout << "Please try again" << endl << endl;
+                    }
+                }
+                else
+                    cout << "You succesfully added a meal" << endl << endl;
+            }
+        }
+    }
+}
 //TODO: PT Build out program description and instructions. 
 void welcome()
 {
@@ -301,12 +319,21 @@ void parseTokens(char* buffer, std::vector<std::string>& a)
 	char* token;
 	char* rest = (char*)buffer;
 
-	while ((token = strtok_r(rest, ";", &rest)))
+	while ((token = strtok_r(rest, deli, &rest)))
 	{
 		a.push_back(token);
 	}
 
 	return;
+}
+
+string toLowerCase(string s)
+{
+    string result = "";
+    for (char i : s) {
+        result += tolower(i);
+    }
+    return result;
 }
 
 /*
@@ -348,6 +375,6 @@ string getUsernamePassword() {
 	cout << "Please provide your password: ";
 	cin >> password;
 	cout << endl;
-	input += username + ';' + password;
+	input += username + ';' + password + ";";
 	return input; 
 }
