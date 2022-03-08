@@ -64,7 +64,7 @@ bool RPCServer::StartServer()
 
 	// setsockopt constants
 	const int LEVEL = SOL_SOCKET;
-	const int OPTNAMES = SO_REUSEADDR | SO_REUSEPORT;  // Socket level options to reuse address and port
+	const int OPTNAMES = SO_REUSEADDR;  // Socket level options to reuse address and port
 
 	// Create socket file descriptor, exit on error or display success msg
 	if ((m_server_fd = socket(NAMESPACE, STYLE, PROTOCOL)) == 0)
