@@ -1,0 +1,1 @@
+/usr/bin/c++.exe   -Wl,--enable-auto-import CMakeFiles/Server.dir/main.cpp.o CMakeFiles/Server.dir/Auth.cpp.o CMakeFiles/Server.dir/Meal.cpp.o CMakeFiles/Server.dir/MealGenerator.cpp.o CMakeFiles/Server.dir/RPCImpl.cpp.o CMakeFiles/Server.dir/RPCServer.cpp.o  -o Server.exe -Wl,--out-implib,libServer.dll.a -Wl,--major-image-version,0,--minor-image-version,0 
