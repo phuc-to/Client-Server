@@ -253,6 +253,7 @@ bool RPCImpl::ProcessAddMealRPC(vector<string>& arrayTokens)
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+
 	return true; // RPC complete. 
 }
 
@@ -291,5 +292,5 @@ void RPCImpl::ParseTokens(char* buffer, vector<string>& a)
 	}
 	printf("\n");
 
-	return;
+	return true;
 }
