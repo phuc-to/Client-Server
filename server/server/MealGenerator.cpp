@@ -1,7 +1,7 @@
 /**
  @file  MealGenerator class implementation file
  @for MealTime socket programming project
- @authors Phuc T, Narissa T, Kristen K
+ @authors Phuc T, Narissa T
  @date 3/10/22
  @version .0
  */

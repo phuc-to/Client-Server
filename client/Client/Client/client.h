@@ -1,10 +1,8 @@
 /**
  @file  Client side header file for MealTime socket programming project
- @authors Phuc T, Narissa T, Kristen K
- @date 2/10/22
- @version 1.0
- @reference https://www.geeksforgeeks.org/socket-programming-cc/
- @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
+ @authors Phuc T, Narissa T
+ @date 3/10/22
+ @version 2.0
  */
 
 #include <unistd.h>
@@ -21,7 +19,15 @@ using namespace std;
 class client
 {
 	public:
-
+		static bool loginValidation(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg);
+		static bool mealProcessing(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg);
+		static void welcome();
+		static void optionList();
+		static void mealOptions();
+		static void parseTokens(char * buffer, std::vector<std::string>& a);
+		static string toLowerCase(string s);
+		static bool connectToServer(const char * serverAddress, int port, int & sock);
+		static string getUsernamePassword();
 
 	private:
 
