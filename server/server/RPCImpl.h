@@ -45,13 +45,16 @@ private:
 	/** Parses client socket buffer and calls the approprite RPCImpl class function 
 	to process the request. Accepts status tokens in predefined list within function. 
 
+	@param arrayTokens, vector holding tokens parsed from buffer
 	@pre RPCImpl object seeded and socket connection is live. 
 	@post RPCImpl class function will be employed. 
 	@return true, RPC completed. 
 	*/
     bool ProcessConnectRPC(vector<string>& arrayTokens);
 
-	/** Attempts to sign user in. If user already exists, sends fail code in buffer. 
+	/** Attempts to sign user in. If user already exists, sends fail code in buffer.
+
+	@param arrayTokens, vector holding tokens parsed from buffer
 	@pre RPCImpl object seeded and socket connection is live.
 	@post User signed in.
 	@return true, RPC completed.
@@ -61,6 +64,7 @@ private:
 	/** Returns a buffer containing the information for the meal meeting the client's 
 	input criteria. 
 
+	@param arrayTokens, vector holding tokens parsed from buffer
 	@pre RPCImpl object seeded and socket connection is live.
 	@post Buffer contains meal. 
 	@return true, RPC completed.
@@ -69,6 +73,7 @@ private:
 
 	/** Adds a new Meal to the Meal Generator. Sends fail code in buffer if meal already exists. 
 
+	@param arrayTokens, vector holding tokens parsed from buffer
 	@pre RPCImpl object seeded and socket connection is live.
 	@post SUCCESSCODE sent via buffer. 
 	@return true, RPC completed.
@@ -94,7 +99,7 @@ private:
 	The delimter will be a ; An example buffer could be "connect;mike;mike;"
 
 	@param buffer, pointer to a char array
-	@param a, vector to hold tokens parsed from buffer
+	@param a, vector holding tokens parsed from buffer
 	@post a holds tokens from buffer
 	*/
     void ParseTokens(char* buffer, vector<string>& a);

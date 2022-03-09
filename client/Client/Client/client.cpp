@@ -10,7 +10,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-#include <string.h>
 #include <vector>`
 #include <iterator>
 #include <iostream>
@@ -20,36 +19,47 @@
 
 using namespace std;
 
+/* UTILITY FUNCTION PROTOTYPES */
+
+/** Displays welcome message and program instructions to console. */
+void welcome();
+
+/** Converts an input string to lowercase */
+string toLowerCase(string s);
+
+/** Prompts user for username and password and collects console input */
+string getUsernamePassword();
+
+const char* DELI = ";"; // for parsing 
+
+
 // TCP SETTINGS
 const int NAMESPACE = AF_INET;        // internet namespace IP4 
 const int STYLE = SOCK_STREAM;        // comm style for TCP programming
 const int PROTOCOL = 0;               // 0 for internet 
 const int BUFF_SIZE = 1024;           // default buffer size
 
-const char* deli = ";";
 
-
-
+/** Client-side driver. */
 int main(int argc, char const* argv[])
 {
     
-    int cliSocket = 0;                            // init client socket
+    int cliSocket = 0;                 // init client socket
 
     const char* logoffRPC = "disconnect;";
 
-    char buffer[BUFF_SIZE] = { 0 };              // init buffer
-    const char* serverAddress = argv[1];         // holds server IP address
-    //const int PORT = atoi(argv[2]);           // holds port
+    char buffer[BUFF_SIZE] = { 0 };      // init buffer
+    const char* serverAddress = argv[1]; // holds IP address
+    //const int PORT = atoi(argv[2]);    // holds port
 
-	// Hard coded port for testing
+	// Hard coded port for testing.
 	const int PORT = 10327;                      
 
-	// Attempt to connect to server
+	// Attempt to connect to server.
     bool bConnect = client::connectToServer(serverAddress, PORT, cliSocket);
 
 	// Continue if socket successful connected to server. 
-    if (bConnect == true)
-    {
+    if (bConnect == true) {
         
         int valsend;                    // Bytes sent.
         int valread;                    // Bytes rec'd. 
@@ -60,17 +70,14 @@ int main(int argc, char const* argv[])
         string msg;                     // Message to be sent to server in buffer. 
 
 		// Display program welcome message and initial options to select from. 
-		client::welcome();
+		welcome();
 		client::optionList();
 
         // Begin user login validation and meal processing. 
         if (client::loginValidation(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg))
             client::mealProcessing(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg);               
     }
-    else
-    {
-        printf("Connection failed");
-    }
+    else { printf("Client>Connection failed."); }
 
     // Terminate connection
     close(cliSocket);
@@ -81,15 +88,22 @@ int main(int argc, char const* argv[])
 }
 
 
-bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg)
-{
-    bool isValidUser = false;
+/* CLIENT CLASS FUNCTION DEFINITIONS, SEE CLIENT.H FOR PROTOTYPES */
+
+void client::optionList() {
+	cout << "Select an account option: " << endl;
+	cout << "1: Login" << endl;
+	cout << "2: Signup" << endl;
+	cout << "3: Exit" << endl;
+}
+
+bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg) {
+    bool isValidUser = false;  // Loop control var. 
+
+	// Prompt user for login, signup, or exit until they are succesfully logged in or exit. 
     while (!isValidUser) {
         int userSelection;
-        string username;
-        string password;
-        string admin;
-
+        string username, password, admin;
 
         // Prompt user to (1) Login, (2) Signup, (3) Exit. 
         cout << "Enter your option: ";
@@ -136,8 +150,7 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
             string error_code = arrayTokens[STATUSTOKEN];
 
             // Server returned successful error code upon login. 
-            if (error_code == "successful")
-            {
+            if (error_code == "successful") {
                 isValidUser = true;
                 cout << "Logged In successful." << endl;
             }
@@ -150,15 +163,13 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
             cout << endl;
         }
         // (3) User has selected to exit. Exit gracefully. 
-        else if (userSelection == 3)
-        {
+        else if (userSelection == 3) {
             isValidUser = true;
             cout << "Goodbye!";
             return false;
         }
         // User entered invalid selection, calls optionList again. 
-        else
-        {
+        else {
             cout << "Invalid option. Let's try again!" << endl;
             optionList();
         }
@@ -167,8 +178,7 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
     return true;
 }
 
-bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg)
-{
+bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg) {
     const char* logoffRPC = "disconnect;";
 
     bool isValidUser = false;
@@ -216,8 +226,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             cout << "Invalid option. Let's start again!" << endl;
             meal = 5;
         }
-        if ((meal <= 4) && (meal >= 0))
-        {
+        if ((meal <= 4) && (meal >= 0)) {
             cout << endl;
             const char* curMsg = msg.c_str();
             strcpy(buffer, curMsg);
@@ -236,22 +245,16 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             string error_code = arrayTokens[STATUSTOKEN];
 
             if (meal == 0)
-            {
                 cout << "You are disconnected" << endl;
-            }
-            else
-            {
-                if (meal != 4)
-                {
-                    if (error_code == "successful")
-                    {
+            else {
+                if (meal != 4) {
+                    if (error_code == "successful") {
                         string mealSuggestion = arrayTokens[INFOTOKEN];
                         cout << "The meal for you would be " << mealSuggestion << endl << endl;
 
                         cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
                         cin >> meal;
-                        if (meal == 2)
-                        {
+                        if (meal == 2) {
                             isValidUser = !isValidUser;
 
                             strcpy(buffer, logoffRPC);
@@ -264,8 +267,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
                             cout << "You are disconnected" << endl;
                         }
                     }
-                    else
-                    {
+                    else {
                         //string error = arrayTokens[INFOTOKEN];
                         //cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
                         cout << "Please try again" << endl << endl;
@@ -277,22 +279,8 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
         }
     }
 }
-//TODO: PT Build out program description and instructions. 
-void client::welcome()
-{
-    cout << "Welcome to your Meal Generator." << endl;
-}
 
-void client::optionList()
-{
-    cout << "Select an account option: " << endl;
-    cout << "1: Login" << endl;
-    cout << "2: Signup" << endl;
-    cout << "3: Exit" << endl;
-}
-
-void client::mealOptions()
-{
+void client::mealOptions() {
     cout << "What kind of meal are you looking for? 0 to Exit" << endl;
     cout << "1. A random meal" << endl;
     cout << "2. A meal by time" << endl;
@@ -300,12 +288,11 @@ void client::mealOptions()
     cout << "4. Perhaps you want to add a meal by yourself?" << endl;
 }
 
-void client::parseTokens(char* buffer, std::vector<std::string>& a)
-{
+void client::parseTokens(char* buffer, std::vector<std::string>& a) {
 	char* token;
 	char* rest = (char*)buffer;
 
-	while ((token = strtok_r(rest, deli, &rest)))
+	while ((token = strtok_r(rest, DELI, &rest)))
 	{
 		a.push_back(token);
 	}
@@ -313,23 +300,9 @@ void client::parseTokens(char* buffer, std::vector<std::string>& a)
 	return;
 }
 
-string client::toLowerCase(string s)
-{
-    string result = "";
-    for (char i : s) {
-        result += tolower(i);
-    }
-    return result;
-}
-
-/*
-	ConnectToServer will connect to the Server based on command line
-*/
-bool client::connectToServer(const char* serverAddress, int port, int& sock)
-{
+bool client::connectToServer(const char* serverAddress, int port, int& sock) {
 	struct sockaddr_in serv_addr;
-	if ((sock = socket(NAMESPACE, STYLE, PROTOCOL)) < 0)
-	{
+	if ((sock = socket(NAMESPACE, STYLE, PROTOCOL)) < 0) {
 		printf("\nClient: Socket creation error\n");
 		return false;
 	}
@@ -345,8 +318,7 @@ bool client::connectToServer(const char* serverAddress, int port, int& sock)
 	//	return false;
 	//}
 
-	if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
-	{
+	if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
 		printf("\nClient: Connection Failed\n");
 		return false;
 	}
@@ -354,7 +326,13 @@ bool client::connectToServer(const char* serverAddress, int port, int& sock)
 	return true;
 }
 
-string client::getUsernamePassword() {
+/* UTILITY FUNCTION DEFINITIONS (MAIN)*/
+
+void welcome() {
+	cout << "Welcome to your Meal Generator." << endl;
+}
+
+string getUsernamePassword() {
 	string input, username, password;
 	cout << "Please provide your username: ";
 	cin >> username;
@@ -362,5 +340,13 @@ string client::getUsernamePassword() {
 	cin >> password;
 	cout << endl;
 	input += username + ';' + password + ";";
-	return input; 
+	return input;
+}
+
+string toLowerCase(string s) {
+	string result = "";
+	for (char i : s) {
+		result += tolower(i);
+	}
+	return result;
 }
