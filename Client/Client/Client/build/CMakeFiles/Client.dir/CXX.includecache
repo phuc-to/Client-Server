@@ -25,4 +25,24 @@ iterator
 -
 iostream
 -
+client.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Client/Client/Client/client.h
+
+/cygdrive/c/Users/12066/GitHub/Client-Server/Client/Client/Client/client.h
+unistd.h
+-
+stdio.h
+-
+sys/socket.h
+-
+stdlib.h
+-
+netinet/in.h
+-
+string.h
+-
+vector
+-
+iterator
+-
 
