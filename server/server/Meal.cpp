@@ -1,7 +1,7 @@
 /**
  @file  Meal class implementation file
  @for MealTime socket programming project
- @authors Phuc T, Narissa T, Kristen K
+ @authors Phuc T, Narissa T
  @date 2/12/22
  @version 1.0
  */

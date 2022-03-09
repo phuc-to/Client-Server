@@ -1,6 +1,6 @@
 /**
  @file  RPCServer.h
- @authors Phuc T, Narissa T, Kristen K
+ @authors Phuc T, Narissa T
  @date 3/10/22
  @version 2.0
  */
