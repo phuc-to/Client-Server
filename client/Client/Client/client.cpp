@@ -106,7 +106,7 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
                 msg += getUsernamePassword();
 
                 // Assign admin priveledges to account. 
-                cout << "Would you like Admin priveledges on your account (Y or N)?\n";
+                cout << "Would you like Admin priveledges on your account (Y or N)? ";
                 cin >> admin;
                 if (admin == "Y" || "y")
                     msg += "Y";
@@ -171,15 +171,19 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
 {
     const char* logoffRPC = "disconnect;";
 
-    bool isValidUser = false;
+    bool isValidUser = false;  // Loop control var
+
     while (!isValidUser) {
-        int meal;
+        int userSelection;
         string info;
 
+		// Display options, prompt user, and store selection. 
         mealOptions();
         cout << "Type in your option: ";
-        cin >> meal;
-        switch (meal) {
+        cin >> userSelection;
+
+		// Switch on selction and build msg for buffer.
+        switch (userSelection) {
         case 0:
             isValidUser = !isValidUser;
             msg = "disconnect;";
@@ -213,19 +217,22 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             break;
         default:
             isValidUser = !isValidUser;
-            cout << "Invalid option. Let's start again!" << endl;
-            meal = 5;
+            cout << "Invalid option. Let's start again!\n" << endl;
+            userSelection = 5;
         }
-        if ((meal <= 4) && (meal >= 0))
-        {
+
+		// For all valid selections, convert msg to buffer and send to server. 
+        if ((userSelection <= 4) && (userSelection >= 0)) {
             cout << endl;
             const char* curMsg = msg.c_str();
             strcpy(buffer, curMsg);
             valsend = send(cliSocket, buffer, strlen(buffer), 0);
-            if (meal == 4)
-                cout << "Disconnect message sent" << endl << endl;
+
+			
+            if (userSelection == 4) // Disconnect
+                cout << "Disconnect message sent, goodbye!\n" << endl << endl;
             else
-                cout << "Your meal request has been sent" << endl << endl;
+                cout << "Your meal request has been sent.\n" << endl << endl;
 
             sleep(2);
 
@@ -235,64 +242,56 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             parseTokens(buffer, arrayTokens);
             string error_code = arrayTokens[STATUSTOKEN];
 
-            if (meal == 0)
-            {
-                cout << "You are disconnected" << endl;
-            }
-            else
-            {
-                if (meal != 4)
-                {
-                    if (error_code == "successful")
-                    {
+            if (userSelection == 0)
+                cout << "You are disconnected.\n" << endl;
+            else {
+                if (userSelection != 4) {
+					// Buffer rec'd from server, display response. 
+                    if (error_code == "successful") {
                         string mealSuggestion = arrayTokens[INFOTOKEN];
-                        cout << "The meal for you would be " << mealSuggestion << endl << endl;
 
+                        cout << "The meal for you would be " << mealSuggestion << "!\n";
                         cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
-                        cin >> meal;
-                        if (meal == 2)
-                        {
+                        cin >> userSelection;
+
+						// Disconnect. 
+                        if (userSelection == 2) {
                             isValidUser = !isValidUser;
 
                             strcpy(buffer, logoffRPC);
                             valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                            cout << "Disconnect message sent" << endl << endl;
+                            cout << "Disconnect message sent.\n" << endl << endl;
 
                             sleep(2);
 
                             valread = read(cliSocket, buffer, BUFF_SIZE);
-                            cout << "You are disconnected" << endl;
+                            cout << "You are disconnected.\n" << endl;
                         }
                     }
                     else
-                    {
-                        //string error = arrayTokens[INFOTOKEN];
-                        //cout << "An Error Occured: " << arrayTokens[INFOTOKEN] << endl;
-                        cout << "Please try again" << endl << endl;
-                    }
+                        cout << "Please try again.\m" << endl << endl;
                 }
                 else
-                    cout << "You succesfully added a meal" << endl << endl;
+                    cout << "You succesfully added a meal!\n" << endl << endl;
             }
         }
     }
 }
-//TODO: PT Build out program description and instructions. 
-void client::welcome()
-{
-    cout << "Welcome to your Meal Generator." << endl;
+
+void client::welcome() {
+	string msg = "Welcome to the Client-Server Meal Generator! \nThis program will pass your requests about food\n" 
+		"to and from the client and server to fetch you a\ndelicious meal idea!\n";
+	cout << msg << "\n";
 }
 
-void client::optionList()
-{
+void client::optionList() {
     cout << "Select an account option: " << endl;
     cout << "1: Login" << endl;
     cout << "2: Signup" << endl;
     cout << "3: Exit" << endl;
 }
 
-void client::mealOptions()
-{
+void client::mealOptions() {
     cout << "What kind of meal are you looking for? 0 to Exit" << endl;
     cout << "1. A random meal" << endl;
     cout << "2. A meal by time" << endl;
@@ -300,8 +299,7 @@ void client::mealOptions()
     cout << "4. Perhaps you want to add a meal by yourself?" << endl;
 }
 
-void client::parseTokens(char* buffer, std::vector<std::string>& a)
-{
+void client::parseTokens(char* buffer, std::vector<std::string>& a) {
 	char* token;
 	char* rest = (char*)buffer;
 
@@ -313,8 +311,7 @@ void client::parseTokens(char* buffer, std::vector<std::string>& a)
 	return;
 }
 
-string client::toLowerCase(string s)
-{
+string client::toLowerCase(string s) {
     string result = "";
     for (char i : s) {
         result += tolower(i);
@@ -325,11 +322,9 @@ string client::toLowerCase(string s)
 /*
 	ConnectToServer will connect to the Server based on command line
 */
-bool client::connectToServer(const char* serverAddress, int port, int& sock)
-{
+bool client::connectToServer(const char* serverAddress, int port, int& sock) {
 	struct sockaddr_in serv_addr;
-	if ((sock = socket(NAMESPACE, STYLE, PROTOCOL)) < 0)
-	{
+	if ((sock = socket(NAMESPACE, STYLE, PROTOCOL)) < 0) {
 		printf("\nClient: Socket creation error\n");
 		return false;
 	}
@@ -337,16 +332,7 @@ bool client::connectToServer(const char* serverAddress, int port, int& sock)
 	serv_addr.sin_family = NAMESPACE;
 	serv_addr.sin_port = htons(port);
 
-	// TODO: PT SEG FAULT AT INET_PTON
-	 //Convert IPv4 and IPv6 addresses from text to binary form
-	//if (inet_pton(NAMESPACE, serverAddress, &serv_addr.sin_addr) <= 0)
-	//{
-	//	printf("\nClient: Invalid address/Address not supported \n");
-	//	return false;
-	//}
-
-	if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
-	{
+	if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
 		printf("\nClient: Connection Failed\n");
 		return false;
 	}
