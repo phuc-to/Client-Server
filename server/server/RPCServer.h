@@ -14,6 +14,7 @@
 #include <string.h>
 #include <vector>
 #include <iterator>
+#include <semaphore.h>
 
 
 #include "MealGenerator.h"
@@ -62,5 +63,8 @@ class RPCServer
 		struct sockaddr_in m_address;  // server socket address struct
 
 		MealGenerator* mg;              // private MG object
+		sem_t* updateMG;
+		sem_t* updateDB;
+		sem_t* updateGC;
 };
 

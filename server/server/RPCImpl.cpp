@@ -13,6 +13,7 @@
 #include <string.h>
 #include <vector>
 #include <iterator>
+#include <semaphore.h>
 
 #include "RPCImpl.h"
 #include "Auth.h"
@@ -42,7 +43,19 @@ RPCImpl::RPCImpl(int socket)
 	mg = new MealGenerator();  // Init new MG object.
 	authObj = new Auth();      // Init new Auth object. 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
-};
+}
+RPCImpl::RPCImpl(int socket, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC)
+{
+	m_socket = socket;         // Assign socket to RPCImpl socket field. 
+	m_rpcCount = 0;
+	mg = new MealGenerator();  // Init new MG object.
+	authObj = new Auth();      // Init new Auth object. 
+	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
+	this->updateMG = updateMG;
+	this->updateGC = updateDB;
+	this->updateGC = updateGC;
+}
+;
 
 RPCImpl::~RPCImpl() {};
 
@@ -169,6 +182,8 @@ bool RPCImpl::ProcessSignupRPC(vector<string>& arrayTokens)
 	string adminString = arrayTokens[ADMINTOKEN];
 	char szBuffer[80];
 
+	sem_wait(updateDB);
+
 	// Call Auth's SignUp function. 
 	// If account already exists, send failure error code back. 
 	if (authObj->signUp(userNameString, passwordString, adminString)) 
@@ -180,6 +195,9 @@ bool RPCImpl::ProcessSignupRPC(vector<string>& arrayTokens)
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+
+	sem_post(updateDB);
+
 	return true;  // RPC complete. 
 }
 
@@ -245,6 +263,8 @@ bool RPCImpl::ProcessAddMealRPC(vector<string>& arrayTokens)
 	string cuisine = arrayTokens[CUISINETOKEN];
 	char szBuffer[80];
 
+	sem_wait(updateMG);
+
 	// Attempt to add new meal to Meal Generator class 
 	if(!(mg->addMeal(name, time, cuisine)))  // Meal already exists in MG. 
 		strcpy(szBuffer, FAILCODE);
@@ -253,6 +273,8 @@ bool RPCImpl::ProcessAddMealRPC(vector<string>& arrayTokens)
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+
+	sem_post(updateMG);
 
 	return true; // RPC complete. 
 }

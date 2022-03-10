@@ -21,18 +21,25 @@
 
 using namespace std;
 
-
+struct threadArgs {
+	int socket;
+	sem_t* meal;
+	sem_t* account;
+	sem_t* global;
+	
+};
 
 void* myThreadFun(void* vargp)
 {
 
 	sleep(1);
 
-	int socket = *(int *)vargp;
+	struct threadArgs* input = (struct threadArgs*)vargp;
+	int socket = input->socket;
 	printf("RPCServer>myThreadFun: Calling ProcessRPC on socket\n");
 
 	// Seed new RPCIml object with socket. 
-	RPCImpl *rpcImplObj = new RPCImpl(socket);
+	RPCImpl *rpcImplObj = new RPCImpl(socket, input->meal, input->account, input->global);
 	// ProcessRPC on the socket. 
 	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
 	printf("RPCServer>myThreadFun: Done with Thread");
@@ -46,6 +53,8 @@ RPCServer::RPCServer(const char* serverIP, int port)
     m_serverIP = (char*)serverIP;
     m_port = port;
     mg = new MealGenerator();  // init new MG object
+	updateGC = new sem_t;
+	updateMG = new sem_t;
 };
 
 
@@ -134,7 +143,12 @@ bool RPCServer::ListenForClient()
 
 		// Create new thread with socket.
 		printf("RPCServer>ListenForClient: Launching thread");
-		pthread_create(&thread_id, NULL, myThreadFun, (void*)&socket);
+		struct threadArgs input;
+		input.socket = socket;
+		input.meal = this->updateMG;
+		input.account = this->updateDB;
+		input.global = this->updateGC;
+		pthread_create(&thread_id, NULL, myThreadFun, (void*)&input);
 	}
 	return true;
 }
