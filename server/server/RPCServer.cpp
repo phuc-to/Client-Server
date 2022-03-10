@@ -15,6 +15,7 @@
 #include <vector>
 #include <iterator>
 #include <pthread.h>
+#include <semaphore.h>
 
 #include "RPCServer.h"
 #include "RPCImpl.h"
@@ -23,6 +24,8 @@ using namespace std;
 
 struct threadArgs {
 	int socket;
+	MealGenerator* mg;
+	Auth* accountDB;
 	sem_t* meal;
 	sem_t* account;
 	sem_t* global;
@@ -39,7 +42,7 @@ void* myThreadFun(void* vargp)
 	printf("RPCServer>myThreadFun: Calling ProcessRPC on socket\n");
 
 	// Seed new RPCIml object with socket. 
-	RPCImpl *rpcImplObj = new RPCImpl(socket, input->meal, input->account, input->global);
+	RPCImpl *rpcImplObj = new RPCImpl(socket, input->mg, input->accountDB, input->meal, input->account, input->global);
 	// ProcessRPC on the socket. 
 	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
 	printf("RPCServer>myThreadFun: Done with Thread");
@@ -53,6 +56,7 @@ RPCServer::RPCServer(const char* serverIP, int port)
     m_serverIP = (char*)serverIP;
     m_port = port;
     mg = new MealGenerator();  // init new MG object
+	accountDB = new Auth();
 	updateGC = new sem_t;
 	updateMG = new sem_t;
 };
@@ -145,6 +149,8 @@ bool RPCServer::ListenForClient()
 		printf("RPCServer>ListenForClient: Launching thread");
 		struct threadArgs input;
 		input.socket = socket;
+		input.mg = this->mg;
+		input.accountDB = this->accountDB;
 		input.meal = this->updateMG;
 		input.account = this->updateDB;
 		input.global = this->updateGC;

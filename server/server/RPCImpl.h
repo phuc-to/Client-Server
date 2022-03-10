@@ -27,7 +27,7 @@ public:
     RPCImpl(int socket);
 	
 	/** Creates instance of RPC Implemenation class for access to processing RPCs.*/
-	RPCImpl(int socket, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC);
+	RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC);
 
 	/** Destructor for instance of RPCImpl.*/
     ~RPCImpl();

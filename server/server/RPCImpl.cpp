@@ -44,12 +44,12 @@ RPCImpl::RPCImpl(int socket)
 	authObj = new Auth();      // Init new Auth object. 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
 }
-RPCImpl::RPCImpl(int socket, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC)
+RPCImpl::RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC)
 {
 	m_socket = socket;         // Assign socket to RPCImpl socket field. 
 	m_rpcCount = 0;
-	mg = new MealGenerator();  // Init new MG object.
-	authObj = new Auth();      // Init new Auth object. 
+	this->mg = mg;  // Assign the meal database.
+	authObj = accountDB;      // Init new Auth object. 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
 	this->updateMG = updateMG;
 	this->updateGC = updateDB;

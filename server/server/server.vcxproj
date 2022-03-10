@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Auth.h" />
+    <ClInclude Include="GlobalContext.h" />
     <ClInclude Include="Meal.h" />
     <ClInclude Include="MealGenerator.h" />
     <ClInclude Include="RPCImpl.h" />

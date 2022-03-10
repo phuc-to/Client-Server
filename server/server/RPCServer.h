@@ -63,6 +63,7 @@ class RPCServer
 		struct sockaddr_in m_address;  // server socket address struct
 
 		MealGenerator* mg;              // private MG object
+		Auth* accountDB;
 		sem_t* updateMG;
 		sem_t* updateDB;
 		sem_t* updateGC;
