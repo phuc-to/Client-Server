@@ -17,7 +17,9 @@
 #include <semaphore.h>
 
 
+
 #include "MealGenerator.h"
+#include "GlobalContext.h"
 #include "RPCImpl.h" 
 
 using namespace std; 
@@ -64,6 +66,7 @@ class RPCServer
 
 		MealGenerator* mg;              // private MG object
 		Auth* accountDB;
+		GlobalContext* gc;
 		sem_t* updateMG;
 		sem_t* updateDB;
 		sem_t* updateGC;

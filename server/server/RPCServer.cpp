@@ -26,6 +26,7 @@ struct threadArgs {
 	int socket;
 	MealGenerator* mg;
 	Auth* accountDB;
+	GlobalContext* gc;
 	sem_t* meal;
 	sem_t* account;
 	sem_t* global;
@@ -42,7 +43,7 @@ void* myThreadFun(void* vargp)
 	printf("RPCServer>myThreadFun: Calling ProcessRPC on socket\n");
 
 	// Seed new RPCIml object with socket. 
-	RPCImpl *rpcImplObj = new RPCImpl(socket, input->mg, input->accountDB, input->meal, input->account, input->global);
+	RPCImpl *rpcImplObj = new RPCImpl(socket, input->mg, input->accountDB, input->gc, input->meal, input->account, input->global);
 	// ProcessRPC on the socket. 
 	rpcImplObj->ProcessRPC();   // This will go until client disconnects;
 	printf("RPCServer>myThreadFun: Done with Thread");
@@ -57,6 +58,7 @@ RPCServer::RPCServer(const char* serverIP, int port)
     m_port = port;
     mg = new MealGenerator();  // init new MG object
 	accountDB = new Auth();
+	gc = new GlobalContext();
 	updateGC = new sem_t;
 	updateMG = new sem_t;
 };
@@ -150,6 +152,7 @@ bool RPCServer::ListenForClient()
 		struct threadArgs input;
 		input.socket = socket;
 		input.mg = this->mg;
+		input.gc = this->gc;
 		input.accountDB = this->accountDB;
 		input.meal = this->updateMG;
 		input.account = this->updateDB;

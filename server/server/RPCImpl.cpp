@@ -17,6 +17,7 @@
 
 #include "RPCImpl.h"
 #include "Auth.h"
+#include "GlobalContext.h"
 
 using namespace std;
 
@@ -26,16 +27,6 @@ const char* SUCCESSCODE = "successful;";
 const string defaultID = "admin";
 const string defaultPassword = "password";
 
-typedef struct _GlobalContext {
-	int g_rpcCount;
-	int g_mealCount;
-	int g_breakfastCount;
-	int g_lunchCount;
-	int g_dinnerCount;
-} GlobalContext;
-
-GlobalContext globalObj; 
-
 RPCImpl::RPCImpl(int socket)
 {
 	m_socket = socket;         // Assign socket to RPCImpl socket field. 
@@ -44,13 +35,14 @@ RPCImpl::RPCImpl(int socket)
 	authObj = new Auth();      // Init new Auth object. 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
 }
-RPCImpl::RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC)
+RPCImpl::RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, GlobalContext* gc, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC)
 {
 	m_socket = socket;         // Assign socket to RPCImpl socket field. 
 	m_rpcCount = 0;
 	this->mg = mg;  // Assign the meal database.
 	authObj = accountDB;      // Init new Auth object. 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
+	this->gc = gc;
 	this->updateMG = updateMG;
 	this->updateGC = updateDB;
 	this->updateGC = updateGC;
@@ -105,12 +97,21 @@ bool RPCImpl::ProcessRPC()
 		if ((bConnected == false) && (aString == SIGNUP)) {
 			bStatusOk = ProcessSignupRPC(arrayTokens);
 			
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+
 			aString = CONNECT;
 		}
 
 		// Connect RPC - call ProcessConnectRPC when not connected and RPCToken is "connect". 
 		if ((bConnected == false) && (aString == CONNECT)) {
 			bStatusOk = ProcessConnectRPC(arrayTokens);  
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+
 			if (bStatusOk == true)
 				bConnected = true;
 		}
@@ -119,16 +120,31 @@ bool RPCImpl::ProcessRPC()
 		else if ((bConnected == true) && (aString == DISCONNECT)) {
 			bStatusOk = ProcessDisconnectRPC();
 			printf("RPCServer>Disconnected.");
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+
 			bContinue = false; 
 		}
 
 		// Status RPC - call ProcessStatusRPC on RPCToken "status". 
-		else if ((bConnected == true) && (aString == STATUS))
+		else if ((bConnected == true) && (aString == STATUS)) {
 			bStatusOk = ProcessStatusRPC();   // Status RPC
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+		}
 
 		// Get Meal RPC - call ProcessMealRPC when connected and RPCToken is "meal". 
 		else if ((bConnected == true) && (aString == MEAL)) {
 			bStatusOk = ProcessMealRPC(arrayTokens);  
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+
 			if (bStatusOk == true)
 				bConnected = true;
 		}
@@ -136,6 +152,11 @@ bool RPCImpl::ProcessRPC()
 		// AddMeal RPC - calls ProcessAddMealRPC when connected and RPCToken is "addMeal". 
 		else if ((bConnected == true) && (aString == ADDMEAL)) {
 			bStatusOk = ProcessAddMealRPC(arrayTokens);  
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+
 			if (bStatusOk == true)
 				bConnected = true;
 		}
@@ -224,6 +245,14 @@ bool RPCImpl::ProcessMealRPC(vector<string>& arrayTokens)
 	}
 	else if (RPC == "ByTime") {
 		output = mg->getRandomMealByTime(info);
+		sem_wait(updateGC);
+		if (info == "breakfast")
+			gc->incBreakfast();
+		else if (info == "lunch")
+			gc->incLunch();
+		else if (info == "dinner")
+			gc->incDinner();
+		sem_post(updateGC);
 		if (output != "")
 			strcpy(szBuffer, (SUCCESSCODE + output).c_str());
 		else {
