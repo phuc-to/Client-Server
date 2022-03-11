@@ -13,9 +13,11 @@
 #include <string>
 #include <vector>
 #include <iterator>
+#include <semaphore.h>
 
 #include "Auth.h"
 #include "MealGenerator.h"
+#include "GlobalContext.h"
 
 using namespace std;
 
@@ -24,6 +26,9 @@ class RPCImpl
 public:
 	/** Creates instance of RPC Implemenation class for access to processing RPCs.*/
     RPCImpl(int socket);
+	
+	/** Creates instance of RPC Implemenation class for access to processing RPCs.*/
+	RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, GlobalContext* gc, sem_t* updateMG, sem_t* updateDB, sem_t* updateGC);
 
 	/** Destructor for instance of RPCImpl.*/
     ~RPCImpl();
@@ -40,6 +45,10 @@ private:
     int m_socket;
 	MealGenerator* mg;  // Meal Generator object. 
 	Auth* authObj;      // User authorization object. 
+	GlobalContext* gc;
+	sem_t* updateMG;
+	sem_t* updateDB;
+	sem_t* updateGC;
 	
 
 	/** Parses client socket buffer and calls the approprite RPCImpl class function 
