@@ -273,8 +273,12 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
                     else
                         cout << "Please try again.\n\n";
                 }
-                else
-                    cout << "You succesfully added a meal!\n\n";
+                else {
+                    if (error_code == "successful")
+                        cout << "You succesfully added a meal!\n\n";
+                    else
+                        cout << "The meal you added already exists.\n\n";
+                }
             }
         }
     }
