@@ -24,15 +24,17 @@ The server listens on the provided port on local host.
 To build, navigate to the `./Client-Server` folder. 
 Open two CLI windows. 
 
-CLI Window 1 - Build executables, Run Server: 
+![Imgur](https://i.imgur.com/pl3Bq7K.jpg)
 
-![Imgur](https://i.imgur.com/0Xwm1LK.jpg)
+CLI Window 1 - Build executables, Run Server: 
 
 `/Client-Server-main $ mkdir build`
 
 `/Client-Server-main $ cmake -S . -B build`
 
 `/Client-Server-main $ cmake -S . -B build`
+
+![Imgur](https://i.imgur.com/0Xwm1LK.jpg)
 
 `/Client-Server-main $ cd build/Server`
 
@@ -42,5 +44,5 @@ CLI Window 2 - Run Client:
 
 `/Client-Server-main/build/Client $ Client`
 
-
+![Imgur](https://i.imgur.com/W625tGE.jpg)
 
