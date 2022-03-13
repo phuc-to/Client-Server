@@ -12,6 +12,9 @@
 
 using namespace std;
 
+/*
+ * User authorization class that stores usernames, passwords, and status' of client connections. 
+ */
 class Auth
 {
 public:
@@ -21,13 +24,17 @@ public:
 	/** Auth class destructor*/
 	~Auth();
 
-
+	/*signUp stores a new username and password in userLookupMap and updates admin status
+	@param username
+	@param password
+	@param status, true for admin, false for normal user
+	@param admin, "Y" for admin priveledges
+	*/
 	bool signUp(const string &username, const string &password, const string &admin);
 
 	/**
 	AssignAdmin stores admin status of users stored in userLookupMap
 	@param username
-	@param status, true for admin, false for normal user
 	@param admin, "Y" for admin priveledges
 	*/
 	bool assignAdmin(const string &username);
@@ -35,7 +42,8 @@ public:
 	/**
 	Login checks that the user already exists in the Auth object, then logs
 	them into the program. 
-	@
+	@param username
+	@param password
 	*/
 	bool login(const string &username, const string &password);
 
@@ -56,6 +64,7 @@ private:
 
 	// key:usernamepassword; value:true/false for logged in 
 	unordered_map<string, string> userLookupMap; 
+
 	// key:username, value:true/false
 	unordered_map<string, bool> adminLookupMap;  
 

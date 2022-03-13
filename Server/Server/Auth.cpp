@@ -5,20 +5,16 @@
  @version 1.0
  */
 
+#pragma once
+
 #include "Auth.h"
 #include <unordered_map>
 
-Auth::Auth()
-{
+Auth::Auth() {}
 
-}
+Auth::~Auth() {}
 
-Auth::~Auth()
-{
-}
-
-bool Auth::signUp(const string &username, const string &password, const string &admin)
-{
+bool Auth::signUp(const string &username, const string &password, const string &admin) {
 
 	// New user, create new account and assign admin priveledges. 
 	if (this->userLookupMap.find(username) == userLookupMap.end()) {
@@ -42,13 +38,11 @@ bool Auth::assignAdmin(const string & username)
 		if (this->adminLookupMap.find(username) == adminLookupMap.end()) {
 			this->adminLookupMap.insert({ username, true });
 		}
-
-		return true;
 	}
+	return true;
 }
 
-bool Auth::login(const string & username, const string & password)
-{
+bool Auth::login(const string & username, const string & password) {
 	string storedPassword; 
 
 	// Check that user already exists. If not, return false. 
@@ -62,12 +56,10 @@ bool Auth::login(const string & username, const string & password)
 		if (storedPassword != password)
 			return false; 
 	}
-
 	return true;
 }
 
-bool Auth::userLookup(const string& username, const string& password)
-{
+bool Auth::userLookup(const string& username, const string& password) {
 	if (this->userLookupMap.find(username) == userLookupMap.end())
 		return true;
 	return false;
