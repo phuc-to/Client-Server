@@ -28,9 +28,9 @@ To build, navigate to the `./Client-Server` folder.
 `$ cmake --build build`
 
 ## Run the Program
-1. Download or clone project code. 
-2. Build Server and Client executables. Open two CLI windows, navigate to /Client-Server-main. 
-- In build and run the server in terminal 1: 
+Open two CLI windows. 
+
+CLI Window 1 - Build executables, Run Server: 
 
 `/Client-Server-main $ mkdir build`
 
@@ -42,8 +42,7 @@ To build, navigate to the `./Client-Server` folder.
 
 `/Client-Server-main/build/Server $ Server`
 
-
-Run client in terminal 2: 
+CLI Window 2 - Run Client: 
 
 `/Client-Server-main/build/Client $ Client`
 
