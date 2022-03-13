@@ -22,7 +22,9 @@ The server listens on the provided port on local host.
 
 ## Build
 To build, navigate to the `./Client-Server` folder. 
+
 `$ cmake -S . -B build`
+
 `$ cmake --build build`
 
 ## Run the Program
