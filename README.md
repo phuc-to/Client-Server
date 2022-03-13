@@ -58,3 +58,7 @@ Simplified Class Diagram
 
 
 Full Class Diagram 
+Simplified Class Diagram
+<p align = "center">
+  <img src = https://i.imgur.com/TnjqjA1.png />
+</p>
