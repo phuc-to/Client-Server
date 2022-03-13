@@ -4,7 +4,9 @@
  @date 3/10/22
  @version 2.0
  */
+
 #pragma once
+
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -21,8 +23,10 @@
 
 using namespace std;
 
-class RPCImpl
-{
+/*
+ * Implementation of Remote Procedure Calls. 
+ */
+class RPCImpl {
 public:
 	/** Creates instance of RPC Implemenation class for access to processing RPCs.*/
     RPCImpl(int socket);
@@ -45,10 +49,10 @@ private:
     int m_socket;
 	MealGenerator* mg;  // Meal Generator object. 
 	Auth* authObj;      // User authorization object. 
-	GlobalContext* gc;
-	sem_t* updateMG;
-	sem_t* updateDB;
-	sem_t* updateGC;
+	GlobalContext* gc;  
+	sem_t* updateMG;    // Protects global Meal Generator object. 
+	sem_t* updateDB;    // Protects global Auth object. 
+	sem_t* updateGC;    // Protects global context struct. 
 	
 
 	/** Parses client socket buffer and calls the approprite RPCImpl class function 
@@ -61,6 +65,7 @@ private:
     bool ProcessConnectRPC(vector<string>& arrayTokens);
 
 	/** Attempts to sign user in. If user already exists, sends fail code in buffer. 
+
 	@pre RPCImpl object seeded and socket connection is live.
 	@post User signed in.
 	@return true, RPC completed.

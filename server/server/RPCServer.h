@@ -6,6 +6,7 @@
  */
 
 #pragma once
+
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h> // UNIX socket structs
@@ -15,8 +16,6 @@
 #include <vector>
 #include <iterator>
 #include <semaphore.h>
-
-
 
 #include "MealGenerator.h"
 #include "GlobalContext.h"

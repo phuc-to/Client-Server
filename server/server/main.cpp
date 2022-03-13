@@ -2,15 +2,19 @@
  @file  main.cpp - Driver file which runs the server side of the application. 
  @authors Phuc T, Narissa T, Kristen K
  @date 3/10/22
- @version 1.0
- @reference https://www.geeksforgeeks.org/socket-programming-cc/
- @reference https://www.gnu.org/software/libc/manual/html_node/Sockets.html
+ @version 3.0
  */
 
-#include "RPCServer.h"
+#pragma once
+
 #include <cstdio>       // printf
 #include <iostream>     // C++ IO
 
+#include "RPCServer.h"
+
+/*
+ * Server startup. Requires manual shutdown. 
+ */
 int main(int argc, char const* argv[])
 {
 	cout << "main: Starting in main...\n";
@@ -22,17 +26,8 @@ int main(int argc, char const* argv[])
 	bool statusOk = true;           // Holds server status, true when server is running. 
 	RPCServer* serverObj = new RPCServer(serverIP, port);
 
-	// TODO: Remove later, preprocessor directive is basically a comment block. 
-#if 0
-	std::vector<std::string> tokArray;
-	char buffer[128] = { "connect;mike;mike" };
-	serverObj->ParseTokens(buffer, tokArray);
-#endif
-	// Print it out
-
 	statusOk = serverObj->StartServer();
-	while (statusOk)
-	{
+	while (statusOk) {
 		statusOk = serverObj->ListenForClient();
 		//statusOk = serverObj->ProcessRPC(); // Launch thread
 	}
@@ -41,25 +36,3 @@ int main(int argc, char const* argv[])
 	return 0;
 }
 
-//int main(int argc, char const* argv[])
-//{
-//
-//	const char* serverIP = argv[1];
-//	int port = atoi(argv[2]);
-//
-//	bool statusOk = true;
-//	RPCServer* serverObj = new RPCServer(serverIP, port);
-//
-//	// Print it out
-//
-//	statusOk = serverObj->StartServer();
-//	printf("Endless loop, as server is up always");
-//	while (statusOk)
-//	{
-//		statusOk = serverObj->ListenForClient();
-//		statusOk = serverObj->ProcessRPC(); // Launch thread
-//	}
-//
-//	delete serverObj;
-//	return 0;
-//}
