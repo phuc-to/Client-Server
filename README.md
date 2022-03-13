@@ -50,3 +50,11 @@ CLI Window 2 - Run Client:
 
 ![Imgur](https://i.imgur.com/W625tGE.jpg)
 
+## Object Oriented Design
+Simplified Class Diagram
+<p align = "center">
+  <img src = https://imgur.com/zahz1lW />
+</p>
+
+
+Full Class Diagram 
