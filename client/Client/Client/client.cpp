@@ -217,7 +217,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             break;
         default:
             isValidUser = !isValidUser;
-            cout << "Invalid option. Let's start again!\n" << endl;
+            cout << "Invalid option. Let's start again!\n\n";
             userSelection = 5;
         }
 
@@ -229,10 +229,12 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             valsend = send(cliSocket, buffer, strlen(buffer), 0);
 
 			
-            if (userSelection == 4) // Disconnect
-                cout << "Disconnect message sent, goodbye!\n" << endl << endl;
+            if (userSelection == 0) // Disconnect
+                cout << "Disconnect message sent, goodbye!\n\n";
+            if (userSelection == 4)
+                cout << "Your meal adding request has been sent.\n\n";
             else
-                cout << "Your meal request has been sent.\n" << endl << endl;
+                cout << "Your meal request has been sent.\n\n";
 
             sleep(2);
 
@@ -243,7 +245,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             string error_code = arrayTokens[STATUSTOKEN];
 
             if (userSelection == 0)
-                cout << "You are disconnected.\n" << endl;
+                cout << "You are disconnected.\n\n";
             else {
                 if (userSelection != 4) {
 					// Buffer rec'd from server, display response. 
@@ -254,25 +256,25 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
                         cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
                         cin >> userSelection;
 
-						// Disconnect. 
+                        // Disconnect. 
                         if (userSelection == 2) {
                             isValidUser = !isValidUser;
 
                             strcpy(buffer, logoffRPC);
                             valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                            cout << "Disconnect message sent.\n" << endl << endl;
+                            cout << "Disconnect message sent.\n\n";
 
                             sleep(2);
 
                             valread = read(cliSocket, buffer, BUFF_SIZE);
-                            cout << "You are disconnected.\n" << endl;
+                            cout << "You are disconnected.\n\n";
                         }
                     }
                     else
-                        cout << "Please try again.\m" << endl << endl;
+                        cout << "Please try again.\n\n";
                 }
                 else
-                    cout << "You succesfully added a meal!\n" << endl << endl;
+                    cout << "You succesfully added a meal!\n\n";
             }
         }
     }

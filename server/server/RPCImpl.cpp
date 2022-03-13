@@ -44,7 +44,7 @@ RPCImpl::RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, GlobalContext* 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
 	this->gc = gc;
 	this->updateMG = updateMG;
-	this->updateGC = updateDB;
+	this->updateDB = updateDB;
 	this->updateGC = updateGC;
 }
 ;
@@ -106,14 +106,11 @@ bool RPCImpl::ProcessRPC()
 
 		// Connect RPC - call ProcessConnectRPC when not connected and RPCToken is "connect". 
 		if ((bConnected == false) && (aString == CONNECT)) {
-			bStatusOk = ProcessConnectRPC(arrayTokens);  
+			bStatusOk = ProcessConnectRPC(arrayTokens, bConnected);  
 
 			sem_wait(updateGC);
 			gc->incRPC();
 			sem_post(updateGC);
-
-			if (bStatusOk == true)
-				bConnected = true;
 		}
 		
 		// Disconnect RPC - call ProcessDisconnectRPC when connected and RPCToken is "disconnect". 
@@ -144,9 +141,6 @@ bool RPCImpl::ProcessRPC()
 			sem_wait(updateGC);
 			gc->incRPC();
 			sem_post(updateGC);
-
-			if (bStatusOk == true)
-				bConnected = true;
 		}
 
 		// AddMeal RPC - calls ProcessAddMealRPC when connected and RPCToken is "addMeal". 
@@ -156,9 +150,6 @@ bool RPCImpl::ProcessRPC()
 			sem_wait(updateGC);
 			gc->incRPC();
 			sem_post(updateGC);
-
-			if (bStatusOk == true)
-				bConnected = true;
 		}
 		else {
 			printf("RPCServer>ProcessRPC: Invalid tokens: ", aString, "\n");
@@ -167,7 +158,7 @@ bool RPCImpl::ProcessRPC()
 	return true;
 }
 
-bool RPCImpl::ProcessConnectRPC(vector<string>& arrayTokens)
+bool RPCImpl::ProcessConnectRPC(vector<string>& arrayTokens, bool& connected)
 {
 	const int USERNAMETOKEN = 1;
 	const int PASSWORDTOKEN = 2;
@@ -178,9 +169,10 @@ bool RPCImpl::ProcessConnectRPC(vector<string>& arrayTokens)
 	char szBuffer[80];
 
 	// Try to login.
-	if (authObj->login(userNameString, passwordString))
+	connected = authObj->login(userNameString, passwordString);
+	if (connected)
 		strcpy(szBuffer, SUCCESSCODE); // Login was successful. 
-	else
+	else 
 		strcpy(szBuffer, FAILCODE);    // Login failed. 
 
 	// Send response back.

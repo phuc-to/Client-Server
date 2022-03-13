@@ -62,7 +62,7 @@ private:
 	@post RPCImpl class function will be employed. 
 	@return true, RPC completed. 
 	*/
-    bool ProcessConnectRPC(vector<string>& arrayTokens);
+    bool ProcessConnectRPC(vector<string>& arrayTokens, bool& connected);
 
 	/** Attempts to sign user in. If user already exists, sends fail code in buffer. 
 
