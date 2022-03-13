@@ -22,7 +22,7 @@ The server listens on the provided port on local host.
 
 ## Build
 To build, navigate to the `./Client-Server` folder. 
-![Step 1](/images/step1.JPG)
+![Step1](/images/step1.jpg)
 `$ cmake -S . -B build`
 
 `$ cmake --build build`
