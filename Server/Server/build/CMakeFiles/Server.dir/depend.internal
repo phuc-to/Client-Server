@@ -13,12 +13,14 @@ CMakeFiles/Server.dir/MealGenerator.cpp.o
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
 CMakeFiles/Server.dir/RPCImpl.cpp.o
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
+ /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.cpp
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.h
 CMakeFiles/Server.dir/RPCServer.cpp.o
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
+ /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.h
@@ -26,6 +28,7 @@ CMakeFiles/Server.dir/RPCServer.cpp.o
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCServer.h
 CMakeFiles/Server.dir/main.cpp.o
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
+ /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
  /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.h

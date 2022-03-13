@@ -12,12 +12,14 @@ CMakeFiles/Server.dir/MealGenerator.cpp.o: ../MealGenerator.cpp
 CMakeFiles/Server.dir/MealGenerator.cpp.o: ../MealGenerator.h
 
 CMakeFiles/Server.dir/RPCImpl.cpp.o: ../Auth.h
+CMakeFiles/Server.dir/RPCImpl.cpp.o: ../GlobalContext.h
 CMakeFiles/Server.dir/RPCImpl.cpp.o: ../Meal.h
 CMakeFiles/Server.dir/RPCImpl.cpp.o: ../MealGenerator.h
 CMakeFiles/Server.dir/RPCImpl.cpp.o: ../RPCImpl.cpp
 CMakeFiles/Server.dir/RPCImpl.cpp.o: ../RPCImpl.h
 
 CMakeFiles/Server.dir/RPCServer.cpp.o: ../Auth.h
+CMakeFiles/Server.dir/RPCServer.cpp.o: ../GlobalContext.h
 CMakeFiles/Server.dir/RPCServer.cpp.o: ../Meal.h
 CMakeFiles/Server.dir/RPCServer.cpp.o: ../MealGenerator.h
 CMakeFiles/Server.dir/RPCServer.cpp.o: ../RPCImpl.h
@@ -25,6 +27,7 @@ CMakeFiles/Server.dir/RPCServer.cpp.o: ../RPCServer.cpp
 CMakeFiles/Server.dir/RPCServer.cpp.o: ../RPCServer.h
 
 CMakeFiles/Server.dir/main.cpp.o: ../Auth.h
+CMakeFiles/Server.dir/main.cpp.o: ../GlobalContext.h
 CMakeFiles/Server.dir/main.cpp.o: ../Meal.h
 CMakeFiles/Server.dir/main.cpp.o: ../MealGenerator.h
 CMakeFiles/Server.dir/main.cpp.o: ../RPCImpl.h

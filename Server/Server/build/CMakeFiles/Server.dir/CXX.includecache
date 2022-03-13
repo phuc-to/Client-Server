@@ -6,15 +6,39 @@
 
 #IncludeRegexTransform: 
 
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.cpp
+Auth.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
+unordered_map
+-
+
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
 string
 -
 unordered_map
 -
 
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
+string
+-
+unordered_map
+-
+
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.cpp
+Meal.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.h
+
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.h
 string
 -
+
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.cpp
+string
+-
+iostream
+-
+MealGenerator.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
 
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
 vector
@@ -25,6 +49,32 @@ iostream
 -
 Meal.h
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Meal.h
+
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.cpp
+unistd.h
+-
+stdio.h
+-
+sys/socket.h
+-
+stdlib.h
+-
+netinet/in.h
+-
+string.h
+-
+vector
+-
+iterator
+-
+semaphore.h
+-
+RPCImpl.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.h
+Auth.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
+GlobalContext.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
 
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.h
 unistd.h
@@ -43,10 +93,14 @@ vector
 -
 iterator
 -
+semaphore.h
+-
 Auth.h
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/Auth.h
 MealGenerator.h
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
+GlobalContext.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
 
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCServer.cpp
 unistd.h
@@ -68,6 +122,8 @@ vector
 iterator
 -
 pthread.h
+-
+semaphore.h
 -
 RPCServer.h
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCServer.h
@@ -91,8 +147,20 @@ vector
 -
 iterator
 -
+semaphore.h
+-
 MealGenerator.h
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/MealGenerator.h
+GlobalContext.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/GlobalContext.h
 RPCImpl.h
 /cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCImpl.h
+
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/main.cpp
+RPCServer.h
+/cygdrive/c/Users/12066/GitHub/Client-Server/Server/Server/RPCServer.h
+cstdio
+-
+iostream
+-
 
