@@ -20,19 +20,13 @@ The server listens on the provided port on local host.
 - Multi-threaded Server.
 - User authentification.
 
-## Build
+## Build and Run 
 To build, navigate to the `./Client-Server` folder. 
-
-![Step1](images/step 1.JPG)
-
-`$ cmake -S . -B build`
-
-`$ cmake --build build`
-
-## Run the Program
 Open two CLI windows. 
 
 CLI Window 1 - Build executables, Run Server: 
+
+[Step 1](images/step 1.JPG)
 
 `/Client-Server-main $ mkdir build`
 
