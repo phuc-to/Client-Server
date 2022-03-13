@@ -9,10 +9,6 @@ The Meal Generator Client-Server is a socket programming project that returns me
 
 The program first establishes a listening server socket and waits for a connection request from the client. Through the client, the user can select from the five remote procedure calls (described in detail in the next section). After a successful connection is made, the user can call RPCs as many times as desired. To close the connection, the user will call disconnect. The program includes descriptive error messages for all steps of the client server connection and meal RPCs.
 
-<p align = "center">
-  <img src = https://i.imgur.com/C3O56heb.jpg />
-</p>
-
 ## Release 1.0.0
 The server listens on the provided port on local host. 
 
