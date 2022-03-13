@@ -61,6 +61,7 @@ RPCServer::RPCServer(const char* serverIP, int port)
     mg = new MealGenerator();  // init new MG object
 	accountDB = new Auth();
 	gc = new GlobalContext();
+	updateDB = new sem_t;
 	updateGC = new sem_t;
 	updateMG = new sem_t;
 };
@@ -127,6 +128,9 @@ bool RPCServer::StartServer()
 
 bool RPCServer::ListenForClient()
 {
+	sem_init(updateDB, 0, 1);
+	sem_init(updateGC, 0, 1);
+	sem_init(updateMG, 0, 1);
 	int addrlen = sizeof(m_address);
 	vector<pthread_t> thread_ids;
 	pthread_t thread_id;

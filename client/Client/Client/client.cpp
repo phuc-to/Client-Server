@@ -95,6 +95,29 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
         cout << "Enter your option: ";
         cin >> userSelection;
 
+        // Handle (0) Server status report
+        if (userSelection == 0) {
+            msg = "status;";
+            const char* curMsg = msg.c_str();
+            strcpy(buffer, curMsg);
+
+            // Send socket to server.
+            // Buffer example "connect;narissa;mypass", "signup;phuc;mypass". 
+            valsend = send(cliSocket, buffer, strlen(buffer), 0);
+
+            cout << "Status request sent.\n\n";
+
+            sleep(2);
+
+            valread = read(cliSocket, buffer, BUFF_SIZE);
+
+            arrayTokens.clear();
+            parseTokens(buffer, arrayTokens);
+            string error_code = arrayTokens[STATUSTOKEN];
+            if (error_code == "active")
+                cout << "The server is running.\n\n";
+        }
+        
         // Handle (1) Login and (2) Signup. 
         if ((userSelection == 1) || (userSelection == 2)) {
             if (userSelection == 1) {
@@ -123,9 +146,9 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
             valsend = send(cliSocket, buffer, strlen(buffer), 0);
 
             if (userSelection == 1)
-                cout << "Login message sent" << endl << endl;
+                cout << "Login message sent\n\n";
             else
-                cout << "Signup message sent" << endl << endl;
+                cout << "Signup message sent\n\n";
 
             sleep(2);
 
@@ -139,12 +162,12 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
             if (error_code == "successful")
             {
                 isValidUser = true;
-                cout << "Logged In successful." << endl;
+                cout << "Logged In successful.\n";
             }
             // Server returned failed error code upon login.
             else {
-                if (userSelection == 1) cout << "Invalid username/password. Try again!" << endl;
-                else cout << "Account already exists. Try login, or use another identity!" << endl;
+                if (userSelection == 1) cout << "Invalid username/password. Try again!\n";
+                else cout << "Account already exists. Try login, or use another identity!\n";
                 optionList();
             }
             cout << endl;
@@ -159,7 +182,7 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
         // User entered invalid selection, calls optionList again. 
         else
         {
-            cout << "Invalid option. Let's try again!" << endl;
+            cout << "Invalid option. Let's try again!\n";
             optionList();
         }
 
@@ -217,7 +240,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             break;
         default:
             isValidUser = !isValidUser;
-            cout << "Invalid option. Let's start again!\n" << endl;
+            cout << "Invalid option. Let's start again!\n\n";
             userSelection = 5;
         }
 
@@ -229,10 +252,12 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             valsend = send(cliSocket, buffer, strlen(buffer), 0);
 
 			
-            if (userSelection == 4) // Disconnect
-                cout << "Disconnect message sent, goodbye!\n" << endl << endl;
+            if (userSelection == 0) // Disconnect
+                cout << "Disconnect message sent, goodbye!\n\n";
+            if (userSelection == 4)
+                cout << "Your meal adding request has been sent.\n\n";
             else
-                cout << "Your meal request has been sent.\n" << endl << endl;
+                cout << "Your meal request has been sent.\n\n";
 
             sleep(2);
 
@@ -243,7 +268,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             string error_code = arrayTokens[STATUSTOKEN];
 
             if (userSelection == 0)
-                cout << "You are disconnected.\n" << endl;
+                cout << "You are disconnected.\n\n";
             else {
                 if (userSelection != 4) {
 					// Buffer rec'd from server, display response. 
@@ -254,25 +279,29 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
                         cout << "Do you need another suggestion? 1 if so and 2 to logout: ";
                         cin >> userSelection;
 
-						// Disconnect. 
+                        // Disconnect. 
                         if (userSelection == 2) {
                             isValidUser = !isValidUser;
 
                             strcpy(buffer, logoffRPC);
                             valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                            cout << "Disconnect message sent.\n" << endl << endl;
+                            cout << "Disconnect message sent.\n\n";
 
                             sleep(2);
 
                             valread = read(cliSocket, buffer, BUFF_SIZE);
-                            cout << "You are disconnected.\n" << endl;
+                            cout << "You are disconnected.\n\n";
                         }
                     }
                     else
-                        cout << "Please try again.\m" << endl << endl;
+                        cout << "Please try again.\n\n";
                 }
-                else
-                    cout << "You succesfully added a meal!\n" << endl << endl;
+                else {
+                    if (error_code == "successful")
+                        cout << "You succesfully added a meal!\n\n";
+                    else
+                        cout << "The meal you added already exists.\n\n";
+                }
             }
         }
     }
@@ -285,18 +314,19 @@ void client::welcome() {
 }
 
 void client::optionList() {
-    cout << "Select an account option: " << endl;
-    cout << "1: Login" << endl;
-    cout << "2: Signup" << endl;
-    cout << "3: Exit" << endl;
+    cout << "Select an account option: \n";
+    cout << "0: Server status.\n";
+    cout << "1: Login\n";
+    cout << "2: Signup\n";
+    cout << "3: Exit\n";
 }
 
 void client::mealOptions() {
-    cout << "What kind of meal are you looking for? 0 to Exit" << endl;
-    cout << "1. A random meal" << endl;
-    cout << "2. A meal by time" << endl;
-    cout << "3. A meal by cuisine" << endl;    
-    cout << "4. Perhaps you want to add a meal by yourself?" << endl;
+    cout << "What kind of meal are you looking for? 0 to Exit\n";
+    cout << "1. A random meal\n";
+    cout << "2. A meal by time\n";
+    cout << "3. A meal by cuisine\n";    
+    cout << "4. Perhaps you want to add a meal by yourself?\n";
 }
 
 void client::parseTokens(char* buffer, std::vector<std::string>& a) {
