@@ -1,4 +1,4 @@
-# Meal Generator Client-Server Project, CPSC 5042 Seattle University
+# Meal Generator Client-Server Project
 The Meal Generator Client Server group project for CPSC 5042 Operating Systems at Seattle University, by Narissa Tsuboi and Phuc To. 
 
 The Meal Generator Client-Server is a socket programming project that returns meal ideas to the client for a user who is indecisive about what they want to eat and looking for ideas to inspire their next meal. This project utilizes stream socket programming and Transmission Control Protocol (TCP) for IP4, where the client and server communicate with continuous streams of characters (buffers), and the server translates each buffer and performs one of the Remote Procedure Calls (RPCs). The focus of this project is to build a client and server that cleanly communicate with each other using basic TCP programming and socket libraries while engaging the user in a fun, randomized meal idea program. The client server architecture supports multithreaded processes.
@@ -21,6 +21,14 @@ The server listens on the provided port on local host.
 - User authentification.
 
 ## Build
-To build, navigate to 
+To build, navigate to the `./Client-Server` folder. 
+`$ cmake -S . -B build`
+`$ cmake --build build`
+
+## Run the Program
+To run this program, there must be one Server running. 
+To start the server, ` `
+To start a client, ` `
+
 
 
