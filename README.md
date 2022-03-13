@@ -53,7 +53,7 @@ CLI Window 2 - Run Client:
 ## Object Oriented Design
 Simplified Class Diagram
 <p align = "center">
-  <img src = https://imgur.com/zahz1lW />
+  <img src = https://i.imgur.com/zahz1lW.png />
 </p>
 
 
