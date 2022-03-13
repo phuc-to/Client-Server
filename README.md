@@ -16,11 +16,11 @@ The server listens on the provided port on local host.
 5. ProcessStatusRPC
 6. ProcessDisconnectRPC
 
-##Features
+## Features
 - Multi-threaded Server.
 - User authentification.
 
 ## Build
-
+To build, navigate to 
 
 
