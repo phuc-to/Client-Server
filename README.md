@@ -26,7 +26,7 @@ Open two CLI windows.
 
 CLI Window 1 - Build executables, Run Server: 
 
-[Imgur](https://i.imgur.com/0Xwm1LK.jpg)
+![Imgur](https://i.imgur.com/0Xwm1LK.jpg)
 
 `/Client-Server-main $ mkdir build`
 
