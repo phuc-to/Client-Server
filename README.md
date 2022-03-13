@@ -29,7 +29,9 @@ To build, navigate to the `./Client-Server` folder.
 
 ## Run the Program
 To run this program, there must be one Server running. 
+
 To start the server, ` `
+
 To start a client, ` `
 
 
