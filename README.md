@@ -1,22 +1,10 @@
-# Client-Server
-Client Server group project for CPSC 5042 Operating Systems. 
+# Meal Generator Client-Server Project, CPSC 5042 Seattle University
+The Meal Generator Client Server group project for CPSC 5042 Operating Systems at Seattle University, by Narissa Tsuboi and Phuc To. 
 
-The main objective is to create two pieces of software (Client and Server) that will exchange RPC's (Remote Procedure Calls).
+The Meal Generator Client-Server is a socket programming project that returns meal ideas to the client for a user who is indecisive about what they want to eat and looking for ideas to inspire their next meal. This project utilizes stream socket programming and Transmission Control Protocol (TCP) for IP4, where the client and server communicate with continuous streams of characters (buffers), and the server translates each buffer and performs one of the Remote Procedure Calls (RPCs). The focus of this project is to build a client and server that cleanly communicate with each other using basic TCP programming and socket libraries while engaging the user in a fun, randomized meal idea program. The client server architecture supports multithreaded processes.
 
-Milestone 1 - Design and Create simple Client/Server Applications.
+The program first establishes a listening server socket and waits for a connection request from the client. Through the client, the user can select from the five remote procedure calls (described in detail in the next section). After a successful connection is made, the user can call RPCs as many times as desired. To close the connection, the user will call disconnect. The program includes descriptive error messages for all steps of the client server connection and meal RPCs.
 
-Requirements:
 
-Design five RPC's between the Client and the Server using the template below as an example. Try to make them relevant. Two of the five have to be:
-int Connect (char *userName , char *password)
-int Disconnect()
 
-You will design at least three more. You have thre freedom to do whatever you want, but it would be interesting to make some sort of a game, calculator, or something relevant.
- 
-Create a "client" and a "server" on CS1. The server will open a new socket in which the client will make a call. When the server gets a new connection request from client, it will create a new thread. That new thread will then be solely responsible for talking to the client that just called it. The server will then to continue listening for more connection requests
-The data that is transferred between the Client and Server should be string. It is beyond the scope of this class to pass integers in their raw form.The client program should
-establish a connection to the server, execute the connect call, sleep for a random amount of time between 1 and 10 seconds, and execute the Disconnect call
-The three other RPC's can be coded and tested later
-You will put the Client code in "client.cpp" and the Server code in "server.cpp"
-You will have a make file that will build these components
-You will put some debug messages into both client and server code that will end up going to stdout
+
