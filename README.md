@@ -31,13 +31,20 @@ To build, navigate to the `./Client-Server` folder.
 1. Download or clone project code. 
 2. Build Server and Client executables. Open two CLI windows, navigate to /Client-Server-main. 
 - In build and run the server in terminal 1: 
+
 `/Client-Server-main $ mkdir build`
+
 `/Client-Server-main $ cmake -S . -B build`
+
 `/Client-Server-main $ cmake -S . -B build`
+
 `/Client-Server-main $ cd build/Server`
+
 `/Client-Server-main/build/Server $ Server`
 
+
 Run client in terminal 2: 
+
 `/Client-Server-main/build/Client $ Client`
 
 
