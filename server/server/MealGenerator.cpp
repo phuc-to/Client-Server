@@ -59,7 +59,7 @@ MealGenerator::MealGenerator() {
 	addMeal("Dhokla", BREAKFAST, "indian");
 	addMeal("Chakuli Pitha", BREAKFAST, "indian");
 
-	addMeal("Tamagoyaki (rolled omelette", BREAKFAST, "japanese");
+	addMeal("Tamagoyaki (rolled omelette)", BREAKFAST, "japanese");
 	addMeal("Omurice (omelette rice)", BREAKFAST, "japanese");
 	addMeal("Dashi eggs with rice", BREAKFAST, "japanese");
 
@@ -194,12 +194,12 @@ string MealGenerator::getRandomMealByTime(string time) {
 		}
 	}
 	// No Meals of that time of day stored yet.
-	if (numMeals == 0) {
+	if (mealsByTime.size() == 0) {
 		return "";
 	}
 	// 1 or more Meal of input time of day exists. 
 	else {
-		int i = randomize(numMeals); return mealsByTime.at(i).getName();
+		int i = randomize(mealsByTime.size()); return mealsByTime.at(i).getName();
 	}
 }
 
