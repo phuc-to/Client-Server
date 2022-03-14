@@ -112,6 +112,10 @@ private:
 	*/
 	bool ProcessLogoutRPC();
 
+	bool ProcessTotalRPC();
+
+	bool ProcessMostRequestedRPC();
+
 	/** Populates String vector with tokens extracted from the string the client sent.
 	The delimter will be a ; An example buffer could be "connect;mike;mike;"
 
