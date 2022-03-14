@@ -17,10 +17,7 @@ class GlobalContext
 public:
 	GlobalContext() {
 		totalRPC = 0;
-		mealTime = new int[mealTimeNumber];
-		for (int i = 0; i < mealTimeNumber; i++) {
-			mealTime[i] = 0;
-		}
+		mealTime = new int[3]{ 0,0,0 };
 		mealTimeName = new string[mealTimeNumber]{ "breakfast", "lunch", "server" };
 	}
 
@@ -40,12 +37,23 @@ public:
 		mealTime[2]++;
 	}
 
-	string mostAsked() {
+	string mostRequested() {
 		int n = 0;
-		for (int i = 1; i < mealTimeNumber; i++)
+		bool same = true;
+		for (int i = 1; i < mealTimeNumber; i++) {
+			if (mealTime[i] != mealTime[i - 1])
+				same = false;
 			if (mealTime[i] > mealTime[n])
 				n = i;
-		return mealTimeName[n];
+		}
+		if (same)
+			return "NONE";
+		else
+			return mealTimeName[n];
+	}
+	
+	int totalRequest() {
+		return totalRPC;
 	}
 
 private:

@@ -114,8 +114,10 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
             arrayTokens.clear();
             parseTokens(buffer, arrayTokens);
             string error_code = arrayTokens[STATUSTOKEN];
-            if (error_code == "active")
+            if (error_code == "active") {
                 cout << "The server is running.\n\n";
+                optionList();
+            }
         }
         
         // Handle (1) Login and (2) Signup. 
@@ -238,6 +240,12 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             cin >> info;
             msg += toLowerCase(info) + ";";
             break;
+        case 5:
+            msg = "mostRequested;";
+            break;
+        case 6:
+            msg = "totalRPC;";
+            break;
         default:
             isValidUser = !isValidUser;
             cout << "Invalid option. Let's start again!\n\n";
@@ -245,19 +253,28 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
         }
 
 		// For all valid selections, convert msg to buffer and send to server. 
-        if ((userSelection <= 4) && (userSelection >= 0)) {
+        if ((userSelection <= 6) && (userSelection >= 0)) {
             cout << endl;
             const char* curMsg = msg.c_str();
             strcpy(buffer, curMsg);
             valsend = send(cliSocket, buffer, strlen(buffer), 0);
 
-			
-            if (userSelection == 0) // Disconnect
+            switch (userSelection) {
+            case 0:
                 cout << "Logout message sent.\n\n";
-            if (userSelection == 4)
+                break;
+            case 4:
                 cout << "Your meal adding request has been sent.\n\n";
-            else
+                break;
+            case 5:
+                cout << "Your request for most requested time of day has been sent.\n\n";
+                break;
+            case 6:
+                cout << "Your request for total number of RPC done has been sent.\n\n";
+                break;
+            default:
                 cout << "Your meal request has been sent.\n\n";
+            }
 
             sleep(2);
 
@@ -270,7 +287,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             if (userSelection == 0)
                 cout << "You are logged out.\n\n";
             else {
-                if (userSelection != 4) {
+                if (userSelection < 4) {
 					// Buffer rec'd from server, display response. 
                     if (error_code == "successful") {
                         string mealSuggestion = arrayTokens[INFOTOKEN];
@@ -297,10 +314,25 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
                         cout << "Invalid meal request. Please try again.\n\n";
                 }
                 else {
-                    if (error_code == "successful")
-                        cout << "You succesfully added a meal!\n\n";
-                    else
-                        cout << "The meal you added already exists.\n\n";
+                    string time;
+                    switch (userSelection) {
+                    case 4:
+                        if (error_code == "successful")
+                            cout << "You succesfully added a meal!\n\n";
+                        else
+                            cout << "The meal you added already exists.\n\n";
+                        break;
+                    case 5:              
+                        time = arrayTokens[INFOTOKEN];
+                        if (time == "NONE")
+                            cout << "There are no time of day that people are particularly confused, according to our database.\n\n";
+                        else
+                            cout << "People require the most suggestions for " << time << ".\n\n";
+                        break;
+                    default:
+                        cout << "The server served a total of " << arrayTokens[INFOTOKEN] << " RPC(s) not including this one.\n\n";
+                    }
+                   
                 }
             }
         }
@@ -327,6 +359,8 @@ void client::mealOptions() {
     cout << "2. A meal by time\n";
     cout << "3. A meal by cuisine\n";    
     cout << "4. Perhaps you want to add a meal by yourself?\n";
+    cout << "You can also type 5 to see the time of the day people ask for meals the most\n";
+    cout << "Or 6 to see how many RPC(s) our server has served\n";
 }
 
 void client::parseTokens(char* buffer, std::vector<std::string>& a) {

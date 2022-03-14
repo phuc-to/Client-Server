@@ -55,6 +55,7 @@ bool RPCImpl::ProcessRPC()
 {
 	// List of valid RPC codes that ProcessRPC will recognize. 
 	const vector<string> RPCList = { "signup", "connect", "logout", "disconnect", "status", "meal", "addMeal"};
+	const vector<string> RPCStatList = { "totalRPC", "mostRequested" };
 	const string SIGNUP = RPCList[0];
 	const string CONNECT = RPCList[1];
 	const string LOGOUT = RPCList[2];
@@ -62,6 +63,8 @@ bool RPCImpl::ProcessRPC()
 	const string STATUS = RPCList[4];
 	const string MEAL = RPCList[5];
 	const string ADDMEAL = RPCList[6];
+	const string TOTALRPC = RPCStatList[0];
+	const string MOSTREQUESTED = RPCStatList[1];
 	
 	/* 
 	Holds tokenized form of buffer in the formats: 
@@ -163,6 +166,25 @@ bool RPCImpl::ProcessRPC()
 			gc->incRPC();
 			sem_post(updateGC);
 		}
+
+		// TotalRPC RPC - calls ProcessTotalRPC when connected and RPCToken is "totalRPC". 
+		else if ((bConnected == true) && (aString == TOTALRPC)) {
+			bStatusOk = ProcessTotalRPC();
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+		}
+
+		// MostRequested RPC - calls ProcessMostRequestedRPC when connected and RPCToken is "mostRequested". 
+		else if ((bConnected == true) && (aString == MOSTREQUESTED)) {
+			bStatusOk = ProcessMostRequestedRPC();
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+		}
+
 		else {
 			printf("RPCServer>ProcessRPC: Invalid tokens: ", aString, "\n");
 		}
@@ -343,6 +365,31 @@ bool RPCImpl::ProcessLogoutRPC()
 	szBuffer[nlen] = 0;
 	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
 	return true; // RPC complete. 
+}
+
+
+bool RPCImpl::ProcessTotalRPC()
+{
+	char szBuffer[16]; // Size of output buffer. 
+	string stat = SUCCESSCODE + to_string(this->gc->totalRequest()) + ";";
+	strcpy(szBuffer, stat.c_str());
+	// Send Response back on our socket
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	return true;  // RPC complete. 
+}
+
+bool RPCImpl::ProcessMostRequestedRPC()
+{
+	char szBuffer[16]; // Size of output buffer. 
+	string stat = SUCCESSCODE + this->gc->mostRequested() + ";";
+	strcpy(szBuffer, stat.c_str());
+	// Send Response back on our socket
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	return true;  // RPC complete. 
 }
 
 void RPCImpl::ParseTokens(char* buffer, vector<string>& a)
