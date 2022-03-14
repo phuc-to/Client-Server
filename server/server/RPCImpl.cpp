@@ -54,13 +54,14 @@ RPCImpl::~RPCImpl() {};
 bool RPCImpl::ProcessRPC()
 {
 	// List of valid RPC codes that ProcessRPC will recognize. 
-	const vector<string> RPCList = { "signup", "connect", "disconnect", "status", "meal", "addMeal"};
+	const vector<string> RPCList = { "signup", "connect", "logout", "disconnect", "status", "meal", "addMeal"};
 	const string SIGNUP = RPCList[0];
 	const string CONNECT = RPCList[1];
-	const string DISCONNECT = RPCList[2];
-	const string STATUS = RPCList[3];
-	const string MEAL = RPCList[4];
-	const string ADDMEAL = RPCList[5];
+	const string LOGOUT = RPCList[2];
+	const string DISCONNECT = RPCList[3];
+	const string STATUS = RPCList[4];
+	const string MEAL = RPCList[5];
+	const string ADDMEAL = RPCList[6];
 	
 	/* 
 	Holds tokenized form of buffer in the formats: 
@@ -125,8 +126,19 @@ bool RPCImpl::ProcessRPC()
 			bContinue = false; 
 		}
 
+		else if ((bConnected == true) && (aString == LOGOUT)) {
+			bStatusOk = ProcessLogoutRPC();
+			printf("RPCServer>Logged Out.");
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
+
+			bConnected = false;
+		}
+
 		// Status RPC - call ProcessStatusRPC on RPCToken "status". 
-		else if ((bConnected == true) && (aString == STATUS)) {
+		else if (aString == STATUS) {
 			bStatusOk = ProcessStatusRPC();   // Status RPC
 
 			sem_wait(updateGC);
@@ -315,6 +327,17 @@ bool RPCImpl::ProcessDisconnectRPC()
 {
 	char szBuffer[16];  // Size of output buffer.
 	strcpy(szBuffer, "disconnect;");
+	// Send Response back to client.
+	int nlen = strlen(szBuffer);
+	szBuffer[nlen] = 0;
+	send(this->m_socket, szBuffer, strlen(szBuffer) + 1, 0);
+	return true; // RPC complete. 
+}
+
+bool RPCImpl::ProcessLogoutRPC()
+{
+	char szBuffer[16];  // Size of output buffer.
+	strcpy(szBuffer, "loggedout;");
 	// Send Response back to client.
 	int nlen = strlen(szBuffer);
 	szBuffer[nlen] = 0;

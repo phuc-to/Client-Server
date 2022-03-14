@@ -61,10 +61,9 @@ int main(int argc, char const* argv[])
 
 		// Display program welcome message and initial options to select from. 
 		client::welcome();
-		client::optionList();
 
         // Begin user login validation and meal processing. 
-        if (client::loginValidation(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg))
+        while (client::loginValidation(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg))
             client::mealProcessing(cliSocket, buffer, valsend, valread, arrayTokens, STATUSTOKEN, INFOTOKEN, msg);               
     }
     else
@@ -83,6 +82,7 @@ int main(int argc, char const* argv[])
 
 bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valread, vector<string> arrayTokens, int STATUSTOKEN, int INFOTOKEN, string msg)
 {
+    client::optionList();
     bool isValidUser = false;
     while (!isValidUser) {
         int userSelection;
@@ -119,7 +119,7 @@ bool client::loginValidation(int cliSocket, char* buffer, int valsend, int valre
         }
         
         // Handle (1) Login and (2) Signup. 
-        if ((userSelection == 1) || (userSelection == 2)) {
+        else if ((userSelection == 1) || (userSelection == 2)) {
             if (userSelection == 1) {
                 msg = "connect;";
                 msg += getUsernamePassword();
@@ -209,7 +209,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
         switch (userSelection) {
         case 0:
             isValidUser = !isValidUser;
-            msg = "disconnect;";
+            msg = "logout;";
             break;
         case 1:
             msg = "meal;Random;";
@@ -253,7 +253,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
 
 			
             if (userSelection == 0) // Disconnect
-                cout << "Disconnect message sent, goodbye!\n\n";
+                cout << "Logout message sent.\n\n";
             if (userSelection == 4)
                 cout << "Your meal adding request has been sent.\n\n";
             else
@@ -268,7 +268,7 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
             string error_code = arrayTokens[STATUSTOKEN];
 
             if (userSelection == 0)
-                cout << "You are disconnected.\n\n";
+                cout << "You are logged out.\n\n";
             else {
                 if (userSelection != 4) {
 					// Buffer rec'd from server, display response. 
@@ -283,18 +283,18 @@ bool client::mealProcessing(int cliSocket, char* buffer, int valsend, int valrea
                         if (userSelection == 2) {
                             isValidUser = !isValidUser;
 
-                            strcpy(buffer, logoffRPC);
+                            strcpy(buffer, "logout;");
                             valsend = send(cliSocket, buffer, strlen(buffer), 0);
-                            cout << "Disconnect message sent.\n\n";
+                            cout << "Logout message sent.\n\n";
 
                             sleep(2);
 
                             valread = read(cliSocket, buffer, BUFF_SIZE);
-                            cout << "You are disconnected.\n\n";
+                            cout << "You are logged out.\n\n";
                         }
                     }
                     else
-                        cout << "Please try again.\n\n";
+                        cout << "Invalid meal request. Please try again.\n\n";
                 }
                 else {
                     if (error_code == "successful")
@@ -322,7 +322,7 @@ void client::optionList() {
 }
 
 void client::mealOptions() {
-    cout << "What kind of meal are you looking for? 0 to Exit\n";
+    cout << "What kind of meal are you looking for? 0 to Logout\n";
     cout << "1. A random meal\n";
     cout << "2. A meal by time\n";
     cout << "3. A meal by cuisine\n";    

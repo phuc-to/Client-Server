@@ -104,6 +104,14 @@ private:
 	*/
     bool ProcessDisconnectRPC();
 
+	/** Log the user out from the current account to a not-logged-in state, and sends client
+	message stating disconnect was successful.
+
+	@pre RPCImpl object seeded and socket connection is live.
+	@post Connected status changed to false.
+	*/
+	bool ProcessLogoutRPC();
+
 	/** Populates String vector with tokens extracted from the string the client sent.
 	The delimter will be a ; An example buffer could be "connect;mike;mike;"
 
