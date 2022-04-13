@@ -47,6 +47,7 @@ public:
 private:
     int m_rpcCount;  
     int m_socket;
+	bool adminPrivilege;
 	MealGenerator* mg;  // Meal Generator object. 
 	Auth* authObj;      // User authorization object. 
 	GlobalContext* gc;  

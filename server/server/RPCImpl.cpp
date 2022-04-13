@@ -39,6 +39,7 @@ RPCImpl::RPCImpl(int socket, MealGenerator* mg, Auth* accountDB, GlobalContext* 
 {
 	m_socket = socket;         // Assign socket to RPCImpl socket field. 
 	m_rpcCount = 0;
+	adminPrivilege = false;
 	this->mg = mg;  // Assign the meal database.
 	authObj = accountDB;      // Init new Auth object. 
 	authObj->signUp(defaultID, defaultPassword, "Y"); // Seed Auth with default user and password. 
@@ -54,15 +55,16 @@ RPCImpl::~RPCImpl() {};
 bool RPCImpl::ProcessRPC()
 {
 	// List of valid RPC codes that ProcessRPC will recognize. 
-	const vector<string> RPCList = { "signup", "connect", "logout", "disconnect", "status", "meal", "addMeal"};
+	const vector<string> RPCList = { "signup", "connect", "logout", "disconnect", "shutdown", "status", "meal", "addMeal"};
 	const vector<string> RPCStatList = { "totalRPC", "mostRequested" };
 	const string SIGNUP = RPCList[0];
 	const string CONNECT = RPCList[1];
 	const string LOGOUT = RPCList[2];
 	const string DISCONNECT = RPCList[3];
-	const string STATUS = RPCList[4];
-	const string MEAL = RPCList[5];
-	const string ADDMEAL = RPCList[6];
+	const string SHUTDOWN = RPCList[4];
+	const string STATUS = RPCList[5];
+	const string MEAL = RPCList[6];
+	const string ADDMEAL = RPCList[7];
 	const string TOTALRPC = RPCStatList[0];
 	const string MOSTREQUESTED = RPCStatList[1];
 	
@@ -138,6 +140,15 @@ bool RPCImpl::ProcessRPC()
 			sem_post(updateGC);
 
 			bConnected = false;
+		}
+
+		else if ((bConnected == true) && (aString == SHUTDOWN)) {
+			bStatusOk = ProcessShutdownRPC();
+			printf("RPCServer>Logged Out.");
+
+			sem_wait(updateGC);
+			gc->incRPC();
+			sem_post(updateGC);
 		}
 
 		// Status RPC - call ProcessStatusRPC on RPCToken "status". 
